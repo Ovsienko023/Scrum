@@ -59,3 +59,30 @@ end;
 $$
     language plpgsql volatile
                      security definer;
+
+alter function users.create(
+    _name varchar,
+    _hash text,
+    --
+    out error jsonb,
+    out user_id uuid,
+    out creted_at timestamptz
+    ) owner to postgres;
+
+grant execute on function users.create(
+    _name varchar,
+    _hash text,
+    --
+    out error jsonb,
+    out user_id uuid,
+    out creted_at timestamptz
+    ) to postgres;
+
+revoke all on function users.create(
+    _name varchar,
+    _hash text,
+    --
+    out error jsonb,
+    out user_id uuid,
+    out creted_at timestamptz
+    ) from public;
