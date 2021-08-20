@@ -4,7 +4,7 @@ create or replace function users.create(
     --
     out error jsonb,
     out user_id uuid,
-    out creted_at timestamptz
+    out created_at timestamptz
 ) as
 $$
 declare
@@ -42,7 +42,7 @@ begin
 
     insert into users.users as u (name, hash)
     values (_name, _hash)
-    returning u.id, u.created_at into user_id, creted_at;
+    returning u.id, u.created_at into user_id, created_at;
 
 exception
     when others then
@@ -51,7 +51,7 @@ exception
         raise notice 'ERROR: % ', _exception;
 
         user_id := null;
-        creted_at := null;
+        created_at := null;
         error := '{"errors": "unknown"}';
         return;
 
@@ -66,7 +66,7 @@ alter function users.create(
     --
     out error jsonb,
     out user_id uuid,
-    out creted_at timestamptz
+    out created_at timestamptz
     ) owner to postgres;
 
 grant execute on function users.create(
@@ -75,7 +75,7 @@ grant execute on function users.create(
     --
     out error jsonb,
     out user_id uuid,
-    out creted_at timestamptz
+    out created_at timestamptz
     ) to postgres;
 
 revoke all on function users.create(
@@ -84,5 +84,5 @@ revoke all on function users.create(
     --
     out error jsonb,
     out user_id uuid,
-    out creted_at timestamptz
+    out created_at timestamptz
     ) from public;
