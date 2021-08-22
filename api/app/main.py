@@ -1,6 +1,8 @@
 import asyncio
 from aiohttp import web
 
+from internal.container.container import container
+from internal.container.constants import DI_CONFIG, DI_LOGGER
 from app.http.routes import setup_routes
 
 
@@ -12,7 +14,9 @@ async def init_app(cnt) -> web.Application:
 
 
 def main():
-    asyncio.run(init_app(cnt=""))
-    app = init_app(cnt="")
+    config = container.resolve(DI_CONFIG)
 
-    web.run_app(app, host="127.0.0.1", port=8888)  # access_log=logger
+    app = init_app(cnt="")
+    logger = container.resolve(DI_LOGGER)
+
+    web.run_app(app, host=config["db"]["host"], port=config["db"]["port"], access_log=logger)
