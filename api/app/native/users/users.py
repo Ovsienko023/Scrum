@@ -6,7 +6,7 @@ from app.native.users import (
 
 
 async def create_user(app: web.Application, msg: MessageCreateUser) -> MessageCreatedUser:
-    print("create user native")
+
 
     message = MessageCreatedUser(
         id="",
