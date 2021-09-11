@@ -1,10 +1,10 @@
-create table if not exists statuses.statuses
+create table if not exists statuses._
 (
-    id         uuid primary key     default gen_random_uuid(),
-    title      varchar not null
+    id       uuid primary key     default gen_random_uuid(),
+    title    varchar not null
 );
 
-insert into statuses.statuses (title)
+insert into statuses._ (title)
 values ('New'),
        ('In development'),
        ('Developed'),

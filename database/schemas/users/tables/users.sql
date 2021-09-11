@@ -1,4 +1,4 @@
-create table if not exists users.users
+create table if not exists users._
 (
     id         uuid primary key     default gen_random_uuid(),
     created_at timestamptz not null default now(),
@@ -7,4 +7,4 @@ create table if not exists users.users
     deleted_at timestamptz
 );
 
-insert into users.users (name, hash) values ('admin', 'qwerty');
+insert into users._ (name, hash) values ('admin', 'qwerty');
