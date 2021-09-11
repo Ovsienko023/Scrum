@@ -2,15 +2,18 @@ import asyncio
 from aiohttp import web
 
 from internal.container.container import container
-from internal.container.constants import DI_CONFIG, DI_LOGGER
+from internal.container import DI_CONFIG, DI_LOGGER, DI_DATABASE_CLIENT
+from app.constants import APP_CONTAINER
 from app.http.routes import setup_routes
 
 
 async def init_app(cnt) -> web.Application:
     app = web.Application()
 
-    app["APP_CONTAINER"] = cnt
+    client = cnt.resolve(DI_DATABASE_CLIENT)
+    client.connect()
 
+    app[APP_CONTAINER] = cnt
     app.add_routes(setup_routes())
 
     return app
