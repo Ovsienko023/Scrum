@@ -35,9 +35,12 @@ async def create_users(request):
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
-        results = users.create_user(app=request.app, msg=message)
+        results = await users.create_user(app=request.app, msg=message)
     except Exception as err:
         logger.error(f"{err}")
-        errors.done(500, ERROR_UNKNOWN)
+        return errors.done(500, ERROR_UNKNOWN)
 
-    return web.json_response(results.get_entity())
+    return web.json_response({
+            "id": str(results.user_id),
+            "created_at": round(results.created_at.timestamp()),
+        })

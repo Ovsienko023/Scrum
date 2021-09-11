@@ -20,9 +20,9 @@ logger.add(config["dirs"]["logger"], rotation="5MB", retention=5)
 container.register(DI_LOGGER, instance=logger)
 
 instance_client = ClientDB(
-    dbname="mcu",
-    user="postgres",
-    password="",
+    database=config['db']['dbname'],  # "mcu",
+    user=config['db']['user'],  # "postgres",
+    password=config['db']['password'],  # "",
     host=config['db']['host'],
     port=config['db']['port'],
 )

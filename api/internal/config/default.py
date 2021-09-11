@@ -3,7 +3,10 @@ config = {
         "logger": r"D:\projects\Scrum\api\api.log",
     },
     "db": {
-        "host": "127.0.0.1",
-        "port": "8888",
+        "dbname": "postgres",
+        "user": "postgres",
+        "password": "1234",
+        "host": "localhost",
+        "port": "5432",
     },
 }

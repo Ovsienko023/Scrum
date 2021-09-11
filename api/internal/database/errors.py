@@ -1,0 +1,2 @@
+class ErrorDatabase(Exception):
+    pass

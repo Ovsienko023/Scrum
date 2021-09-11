@@ -11,7 +11,7 @@ async def init_app(cnt) -> web.Application:
     app = web.Application()
 
     client = cnt.resolve(DI_DATABASE_CLIENT)
-    client.connect()
+    await client.connect()
 
     app[APP_CONTAINER] = cnt
     app.add_routes(setup_routes())
@@ -25,4 +25,4 @@ def main():
     app = init_app(cnt=container)
     logger = container.resolve(DI_LOGGER)
 
-    web.run_app(app, host=config["db"]["host"], port=config["db"]["port"], access_log=logger)
+    web.run_app(app, host="127.0.0.1", port=8888, access_log=logger)
