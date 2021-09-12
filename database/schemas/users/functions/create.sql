@@ -13,34 +13,26 @@ begin
     _name := nullif(trim(_name), '');
 
     if _name is null then
-        error := '{"errors": "_name"}';
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_name"}}';
         return;
     end if;
 
     if exists(select 1
-              from users.users
+              from users._
               where name = _name)
     then
-        error := '{"errors": "_name"}';
+        error := '{"errors": {"code": 3, "reason": "exists", "description": "_name"}}';
         return;
     end if;
 
     _hash := nullif(trim(_hash), '');
 
     if _hash is null then
-        error := '{"errors": "_hash"}';
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_hash"}}';
         return;
     end if;
 
-    if exists(select 1
-              from users.users
-              where hash = _hash)
-    then
-        error := '{"errors": "_hash"}';
-        return;
-    end if;
-
-    insert into users.users as u (name, hash)
+    insert into users._ as u (name, hash)
     values (_name, _hash)
     returning u.id, u.created_at into user_id, created_at;
 
@@ -52,7 +44,7 @@ exception
 
         user_id := null;
         created_at := null;
-        error := '{"errors": "unknown"}';
+        error := '{"errors": {"code": -1, "reason": "unknown", "description": "%"}}',_exception;
         return;
 
 end;
