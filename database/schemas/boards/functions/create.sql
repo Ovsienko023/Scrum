@@ -25,8 +25,6 @@ begin
         return;
     end if;
 
---     _creator_id := nullif(trim(_creator_id), '');
-
     if not exists(select 1
               from users._
               where id = _creator_id)
