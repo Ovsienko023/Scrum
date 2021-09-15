@@ -13,7 +13,7 @@ begin
     _title := nullif(trim(_title), '');
 
     if _title is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_title"}}';
+        error := '{"code": 2, "reason": "required", "description": "_title"}';
         return;
     end if;
 
@@ -21,7 +21,7 @@ begin
               from boards._
               where title = _title)
     then
-        error := '{"errors": {"code": 3, "reason": "exists", "description": "_title"}}';
+        error := '{"code": 3, "reason": "exists", "description": "_title"}';
         return;
     end if;
 
@@ -29,7 +29,7 @@ begin
               from users._
               where id = _creator_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_creator_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_creator_id"}';
         return;
     end if;
 

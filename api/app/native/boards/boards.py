@@ -6,6 +6,7 @@ from app.constants import APP_CONTAINER
 from app.native.boards import (
     MessageCreateBoard,
     MessageCreatedBoard,
+    ErrorTitleAlreadyExists,
 )
 
 
@@ -29,6 +30,15 @@ async def create_board(app: web.Application, msg: MessageCreateBoard) -> Message
         result = await client.fetchone(query, params)
     except Exception as err:
         logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to create board: {error}")
+        if error["reason"] == "exists" and error["description"] == "_title":
+            raise ErrorTitleAlreadyExists
+        if error["reason"] == "not_found" and error["description"] == "_creator_id":
+            raise ErrorDatabase
         raise ErrorDatabase
 
     message = MessageCreatedBoard(

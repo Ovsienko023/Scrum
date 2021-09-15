@@ -20,26 +20,19 @@ begin
     _description := nullif(trim(_description), '');
 
     if _title is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_title"}}';
+        error := '{"code": 2, "reason": "required", "description": "_title"}';
         return;
     end if;
     if exists(select 1
               from cards._
               where title = _title)
     then
-        error := '{"errors": {"code": 3, "reason": "exists", "description": "_title"}}';
+        error := '{"code": 3, "reason": "exists", "description": "_title"}';
         return;
     end if;
 
     if _description is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_description"}}';
-        return;
-    end if;
-    if exists(select 1
-              from cards._
-              where title = _description)
-    then
-        error := '{"errors": {"code": 3, "reason": "exists", "description": "_description"}}';
+        error := '{"code": 2, "reason": "required", "description": "_description"}';
         return;
     end if;
 
@@ -47,7 +40,7 @@ begin
               from users._
               where id = _developer_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_developer_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_developer_id"}';
         return;
     end if;
 
@@ -55,7 +48,7 @@ begin
               from priorities._
               where id = _priority_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_priority_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
         return;
     end if;
 
@@ -63,7 +56,7 @@ begin
               from statuses._
               where id = _status_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_status_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
         return;
     end if;
 
@@ -71,7 +64,7 @@ begin
               from boards._
               where id = _board_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_board_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_board_id"}';
         return;
     end if;
 
@@ -79,13 +72,13 @@ begin
               from users._
               where id = _creator_id)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_creator_id"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_creator_id"}';
         return;
     end if;
 
     if _estimates_time <= 0
     then
-        error := '{"errors": {"code": 4, "reason": "validate", "description": "_estimates_time"}}';
+        error := '{"code": 4, "reason": "validate", "description": "_estimates_time"}';
         return;
     end if;
 
@@ -101,7 +94,7 @@ exception
 
         card_id := null;
         created_at := null;
-        error := '{"errors": {"code": -1, "reason": "unknown", "description": "%"}}',_exception;
+        error := '{"code": -1, "reason": "unknown", "description": "%"}',_exception;
         return;
 
 end;

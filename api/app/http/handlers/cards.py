@@ -6,7 +6,20 @@ from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.cards import SchemaCreateCard
 from app.http.errors import ErrorContainer
-from app.native.cards import cards, MessageCreateCard
+from app.native.cards import (
+    cards,
+    MessageCreateCard,
+    ErrorTitleAlreadyExists,
+    ErrorBordNotFound,
+    ErrorStatusNotFound,
+    ErrorPriorityNotFound,
+    ErrorDeveloperNotFound,
+    ERROR_TITLE_ALREADY_EXISTS,
+    ERROR_BOARD_NOT_FOUND,
+    ERROR_STATUS_NOT_FOUND,
+    ERROR_PRIORITY_NOT_FOUND,
+    ERROR_DEVELOPER_NOT_FOUND,
+)
 
 
 async def create_card(request) -> web.Response:
@@ -35,6 +48,16 @@ async def create_card(request) -> web.Response:
 
     try:
         result = await cards.create_card(app=request.app, msg=message)
+    except ErrorTitleAlreadyExists:
+        return errors.done(404, ERROR_TITLE_ALREADY_EXISTS)
+    except ErrorBordNotFound:
+        return errors.done(404, ERROR_BOARD_NOT_FOUND)
+    except ErrorStatusNotFound:
+        return errors.done(404, ERROR_STATUS_NOT_FOUND)
+    except ErrorPriorityNotFound:
+        return errors.done(404, ERROR_PRIORITY_NOT_FOUND)
+    except ErrorDeveloperNotFound:
+        return errors.done(404, ERROR_DEVELOPER_NOT_FOUND)
     except ErrorDatabase:
         return errors.done(500, ERROR_DATABASE)
     except Exception as err:

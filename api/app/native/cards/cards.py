@@ -6,6 +6,12 @@ from app.constants import APP_CONTAINER
 from app.native.cards import (
     MessageCreateCard,
     MessageCreatedCard,
+    ErrorTitleAlreadyExists,
+    ErrorBordNotFound,
+    ErrorStatusNotFound,
+    ErrorPriorityNotFound,
+    ErrorDeveloperNotFound,
+
 )
 
 
@@ -44,8 +50,25 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
         logger.error(f"Failing to database: {type(err)}, {err}")
         raise ErrorDatabase
 
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to create cards: {error}")
+        if error["reason"] == "exists" and error["description"] == "_title":
+            raise ErrorTitleAlreadyExists
+        if error["reason"] == "not_found" and error["description"] == "_developer_id":
+            raise ErrorDeveloperNotFound
+        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+            raise ErrorPriorityNotFound
+        if error["reason"] == "not_found" and error["description"] == "_status_id":
+            raise ErrorStatusNotFound
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBordNotFound
+        if error["reason"] == "not_found" and error["description"] == "_creator_id":
+            raise ErrorDatabase
+        raise ErrorDatabase
+
     message = MessageCreatedCard(
-        card_id=result.get("board_id"),
+        card_id=result.get("card_id"),
         created_at=result.get("created_at"),
     )
 

@@ -6,7 +6,12 @@ from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.boards import SchemaCreateBoard
 from app.http.errors import ErrorContainer
-from app.native.boards import boards, MessageCreateBoard
+from app.native.boards import (
+    boards,
+    MessageCreateBoard,
+    ErrorTitleAlreadyExists,
+    ERROR_TITLE_ALREADY_EXISTS
+)
 
 
 async def create_board(request) -> web.Response:
@@ -35,6 +40,8 @@ async def create_board(request) -> web.Response:
 
     try:
         result = await boards.create_board(app=request.app, msg=message)
+    except ErrorTitleAlreadyExists:
+        return errors.done(404, ERROR_TITLE_ALREADY_EXISTS)
     except ErrorDatabase:
         return errors.done(500, ERROR_DATABASE)
     except Exception as err:
