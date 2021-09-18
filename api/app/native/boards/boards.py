@@ -4,10 +4,42 @@ from internal.container import DI_DATABASE_CLIENT, DI_LOGGER
 from internal.database.errors import ErrorDatabase
 from app.constants import APP_CONTAINER
 from app.native.boards import (
+    MessageBoard,
+    MessageGetBoard,
     MessageCreateBoard,
     MessageCreatedBoard,
+    ErrorBoardIdNotFound,
     ErrorTitleAlreadyExists,
 )
+
+
+async def get_board(app: web.Application, msg: MessageGetBoard) -> MessageBoard:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = "select * from boards.get(%(board_id)s)"
+    params = {"board_id": msg.board_id}
+
+    try:
+        result = await client.fetchone(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to get board: {error}")
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBoardIdNotFound
+        raise ErrorDatabase
+
+    return MessageBoard(
+        board_id=msg.board_id,
+        title=result.get("title"),
+        creator_id=result.get("creator_id"),
+        created_at=result.get("created_at"),
+    )
 
 
 async def create_board(app: web.Application, msg: MessageCreateBoard) -> MessageCreatedBoard:

@@ -33,7 +33,7 @@ async def get_card(app: web.Application, msg: MessageGetCard) -> MessageCard:
 
     error = result.get("error")
     if error is not None:
-        logger.error(f"Failing to create cards: {error}")
+        logger.error(f"Failing to get card: {error}")
         if error["reason"] == "not_found" and error["description"] == "_card_id":
             raise ErrorCardIdNotFound
         raise ErrorDatabase
