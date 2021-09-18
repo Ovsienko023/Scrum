@@ -94,7 +94,7 @@ exception
 
         card_id := null;
         created_at := null;
-        error := '{"code": -1, "reason": "unknown", "description": "%"}',_exception;
+        error := format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception);
         return;
 
 end;

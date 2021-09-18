@@ -43,7 +43,7 @@ exception
         title := null;
         created_at := null;
         creator_id := null;
-        error := '{"errors": {"code": -1, "reason": "unknown", "description": "%"}}',_exception;
+        error := format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception);
         return;
 
 end;
