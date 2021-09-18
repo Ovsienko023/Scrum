@@ -6,7 +6,6 @@ from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.cards import SchemaGetCard, SchemaCreateCard
 from app.http.errors import ErrorContainer
-from app.native.estimation import EstimationTime
 from app.native.cards import (
     cards,
     MessageGetCard,
