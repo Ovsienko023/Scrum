@@ -1,3 +1,7 @@
+class ErrorCardIdNotFound(Exception):
+    pass
+
+
 class ErrorTitleAlreadyExists(Exception):
     pass
 

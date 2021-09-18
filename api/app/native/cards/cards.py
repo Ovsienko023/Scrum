@@ -4,15 +4,52 @@ from internal.container import DI_DATABASE_CLIENT, DI_LOGGER
 from internal.database.errors import ErrorDatabase
 from app.constants import APP_CONTAINER
 from app.native.cards import (
+    MessageCard,
+    MessageGetCard,
     MessageCreateCard,
     MessageCreatedCard,
+    ErrorCardIdNotFound,
     ErrorTitleAlreadyExists,
     ErrorBordNotFound,
     ErrorStatusNotFound,
     ErrorPriorityNotFound,
     ErrorDeveloperNotFound,
-
 )
+
+
+async def get_card(app: web.Application, msg: MessageGetCard) -> MessageCard:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = "select * from cards.get(%(card_id)s)"
+    params = {"card_id": msg.card_id}
+
+    try:
+        result = await client.fetchone(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to create cards: {error}")
+        if error["reason"] == "not_found" and error["description"] == "_card_id":
+            raise ErrorCardIdNotFound
+        raise ErrorDatabase
+
+    return MessageCard(
+        card_id=msg.card_id,
+        title=result.get("title"),
+        description=result.get("description"),
+        developer_id=result.get("developer_id"),
+        priority=result.get("priority"),
+        status=result.get("status"),
+        estimates_time=result.get("estimates_time"),
+        board_id=result.get("board_id"),
+        creator_id=result.get("creator_id"),
+        created_at=result.get("created_at"),
+    )
 
 
 async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCreatedCard:

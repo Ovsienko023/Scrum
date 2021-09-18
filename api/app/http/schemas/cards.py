@@ -1,6 +1,13 @@
 from marshmallow import Schema, fields, validate
 
 
+class SchemaGetCard(Schema):
+    card_id = fields.Int(
+        required=True,
+        validate=validate.Range(min=1),
+    )
+
+
 class SchemaCreateCard(Schema):
     title = fields.Str(
         required=True,
