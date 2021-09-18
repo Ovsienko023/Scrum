@@ -6,6 +6,7 @@ from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.cards import SchemaGetCard, SchemaCreateCard
 from app.http.errors import ErrorContainer
+from app.native.estimation import EstimationTime
 from app.native.cards import (
     cards,
     MessageGetCard,
@@ -60,7 +61,7 @@ async def get_card(request) -> web.Response:
             "developer_id": str(result.developer_id),
             "priority": result.priority,
             "status": result.status,
-            "estimates_time": result.estimates_time,
+            "estimates_time": str(EstimationTime(hours=result.estimates_time)),
             "board_id": str(result.board_id),
             "creator_id": str(result.creator_id),
             "created_at": round(result.created_at.timestamp())
