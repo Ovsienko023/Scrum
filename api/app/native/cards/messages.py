@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
+from app.native.estimation import EstimationTime
 
 @dataclass
 class MessageGetCard:
@@ -16,10 +18,13 @@ class MessageCard:
     developer_id: UUID
     priority: str
     status: str
-    estimates_time: int
+    estimates_time: Any
     board_id: UUID
     creator_id: UUID
     created_at: datetime
+
+    def __post_init__(self):
+        self.estimates_time = EstimationTime(hours=self.estimates_time)
 
 
 @dataclass
