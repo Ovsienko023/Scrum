@@ -38,7 +38,7 @@ async def create_board(app: web.Application, msg: MessageCreateBoard) -> Message
         if error["reason"] == "exists" and error["description"] == "_title":
             raise ErrorTitleAlreadyExists
         if error["reason"] == "not_found" and error["description"] == "_creator_id":
-            raise ErrorDatabase
+            raise ErrorDatabase  # todo
         raise ErrorDatabase
 
     message = MessageCreatedBoard(
