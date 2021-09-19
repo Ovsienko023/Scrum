@@ -49,6 +49,7 @@ async def get_card(app: web.Application, msg: MessageGetCard) -> MessageCard:
         board_id=result.get("board_id"),
         creator_id=result.get("creator_id"),
         created_at=result.get("created_at"),
+        updated_at=result.get("updated_at"),
     )
 
 

@@ -22,6 +22,7 @@ class MessageCard:
     board_id: UUID
     creator_id: UUID
     created_at: datetime
+    updated_at: datetime
 
     def __post_init__(self):
         self.estimates_time = EstimationTime(hours=self.estimates_time)

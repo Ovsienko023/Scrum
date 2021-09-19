@@ -63,7 +63,8 @@ async def get_card(request) -> web.Response:
             "estimates_time": str(result.estimates_time),
             "board_id": str(result.board_id),
             "creator_id": str(result.creator_id),
-            "created_at": round(result.created_at.timestamp())
+            "created_at": round(result.created_at.timestamp()),
+            "updated_at": round(result.updated_at.timestamp())
     })
 
 
