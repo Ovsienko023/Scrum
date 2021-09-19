@@ -1,5 +1,5 @@
 class EstimationTime:
-    def __init__(self, hours):
+    def __init__(self, hours=0):
         self.hours = hours
         self.time_string = self.hours_to_string()
 
@@ -23,21 +23,28 @@ class EstimationTime:
 
     @staticmethod
     def convert_to_hours(times: str) -> int:
-        revert_time_str = times[::-1]
         hours = 0
-        for ind, key in enumerate(revert_time_str):
+        numb = ""
+        for ind, key in enumerate(times):
+            if key.isdigit():
+                numb += key
+                continue
             if key == "h":
-                hours += int(revert_time_str[ind + 1])
+                hours += int(numb)
+                numb = ""
+                continue
             if key == "d":
-                hours += int(revert_time_str[ind + 1]) * 8
+                hours += int(numb) * 8
+                numb = ""
+                continue
             if key == "w":
-                hours += int(revert_time_str[ind + 1]) * 40
+                hours += int(numb) * 40
+                numb = ""
+                continue
             if key == "m":
-                month = ""
-                for row in revert_time_str[ind + 1:]:
-                    month += row
-                month = month[::-1]
-                hours += int(month) * 160
+                hours += int(numb) * 160
+                numb = ""
+                continue
 
         return hours
 
@@ -60,10 +67,9 @@ class EstimationTime:
         return self._delete_zero_value(f"{month}m{week}w{day}d{hour}h")
 
 
-# work_time1 = EstimationTime(8)
-# work_time2 = EstimationTime(2)
+# work_time1 = EstimationTime(20) todo del comment
+# work_time2 = EstimationTime()
 # a = work_time2 + work_time1
-#
+
 # print(a)
-#
-# print(EstimationTime.convert_to_hours("1d2h"))
+# print(EstimationTime().convert_to_hours2("1m5d"))

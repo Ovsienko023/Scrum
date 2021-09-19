@@ -78,7 +78,7 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
         "status_id": msg.status_id,
         "board_id": msg.board_id,
         "creator_id": "a24d94d1-2340-4ca2-b765-2384a7a33191",  # todo add oauth
-        "estimates_time": msg.estimates_time,
+        "estimates_time": msg.estimation,
     }
 
     try:

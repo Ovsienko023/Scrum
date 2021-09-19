@@ -1,4 +1,5 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, validates, ValidationError
+from app.native.estimation import EstimationTime
 
 
 class SchemaGetCard(Schema):
@@ -33,7 +34,17 @@ class SchemaCreateCard(Schema):
     creator_id = fields.UUID(
         required=True,
     )
-    estimates_time = fields.Int(
+    estimation = fields.Str(
         required=True,
-        validate=validate.Range(min=1)
+        validate=validate.Length(min=2)
     )
+
+    @validates("estimation")
+    def validate_estimation(self, value):
+        valid_name = ["h", "d", "w", "m"]
+        for row in value:
+            if (not row.isdigit()) and (row not in valid_name):
+                raise ValidationError("Value error: cannot be converted to hours.")
+
+        hours = EstimationTime().convert_to_hours(times=value)
+        return hours
