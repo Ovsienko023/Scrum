@@ -39,14 +39,6 @@ begin
     _title := nullif(trim(_title), '');
     _description := nullif(trim(_description), '');
 
-    if exists(select 1
-              from cards._
-              where title = _title)
-    then
-        error := '{"code": 3, "reason": "exists", "description": "_title"}';
-        return;
-    end if;
-
     if _developer_id is not null and
         not exists(select 1
           from users._
