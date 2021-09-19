@@ -8,8 +8,8 @@ from app.native.cards import (
     MessageGetCard,
     MessageCreateCard,
     MessageCreatedCard,
+    MessageUpdateCard,
     ErrorCardIdNotFound,
-    ErrorTitleAlreadyExists,
     ErrorBordNotFound,
     ErrorStatusNotFound,
     ErrorPriorityNotFound,
@@ -91,8 +91,6 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
     error = result.get("error")
     if error is not None:
         logger.error(f"Failing to create cards: {error}")
-        if error["reason"] == "exists" and error["description"] == "_title":
-            raise ErrorTitleAlreadyExists
         if error["reason"] == "not_found" and error["description"] == "_developer_id":
             raise ErrorDeveloperNotFound
         if error["reason"] == "not_found" and error["description"] == "_priority_id":
@@ -113,3 +111,59 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
     logger.info(f"Card {message.card_id} created.")
 
     return message
+
+
+async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = """
+        select *
+        from cards.update(
+            %(card_id)s,
+            %(title)s,
+            %(description)s,
+            %(developer_id)s,
+            %(priority_id)s,
+            %(status_id)s,
+            %(board_id)s,
+            %(estimates_time)s
+        )
+    """
+    params = {
+        "card_id": msg.card_id,
+        "title": msg.title,
+        "description": msg.description,
+        "developer_id": msg.developer_id,
+        "priority_id": msg.priority_id,
+        "status_id": msg.status_id,
+        "board_id": msg.board_id,
+        "estimates_time": msg.estimation,
+    }
+
+    try:
+        result = await client.fetchone(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to update cards: {error}")
+        if error["reason"] == "exists" and error["description"] == "_card_id":
+            raise ErrorCardIdNotFound
+        if error["reason"] == "not_found" and error["description"] == "_developer_id":
+            raise ErrorDeveloperNotFound
+        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+            raise ErrorPriorityNotFound
+        if error["reason"] == "not_found" and error["description"] == "_status_id":
+            raise ErrorStatusNotFound
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBordNotFound
+        if error["reason"] == "not_found" and error["description"] == "_creator_id":
+            raise ErrorDatabase
+
+        raise ErrorDatabase
+
+    return None

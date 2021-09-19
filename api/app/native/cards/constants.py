@@ -1,5 +1,4 @@
 ERROR_CARD_ID_NOT_FOUND = "Card id not found"
-ERROR_TITLE_ALREADY_EXISTS = "Title already exists"
 ERROR_DEVELOPER_NOT_FOUND = "Developer not found"
 ERROR_PRIORITY_NOT_FOUND = "Priority not found"
 ERROR_STATUS_NOT_FOUND = "Status not found"

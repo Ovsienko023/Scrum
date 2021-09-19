@@ -5,6 +5,7 @@ from uuid import UUID
 
 from app.native.estimation import EstimationTime
 
+
 @dataclass
 class MessageGetCard:
     card_id: int
@@ -44,3 +45,19 @@ class MessageCreateCard:
 class MessageCreatedCard:
     card_id: int
     created_at: datetime
+
+
+@dataclass
+class MessageUpdateCard:
+    card_id: int
+    title: str
+    description: str
+    developer_id: UUID
+    priority_id: UUID
+    status_id: UUID
+    board_id: UUID
+    estimation: Any
+
+    def __post_init__(self):
+        self.estimation = EstimationTime().convert_to_hours(times=self.estimation)
+

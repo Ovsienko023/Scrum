@@ -2,10 +2,6 @@ class ErrorCardIdNotFound(Exception):
     pass
 
 
-class ErrorTitleAlreadyExists(Exception):
-    pass
-
-
 class ErrorDeveloperNotFound(Exception):
     pass
 
