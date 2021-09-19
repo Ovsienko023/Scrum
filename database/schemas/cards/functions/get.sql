@@ -10,7 +10,8 @@ create or replace function cards.get(
     out estimates_time integer,
     out board_id uuid,
     out creator_id uuid,
-    out created_at timestamptz
+    out created_at timestamptz,
+    out updated_at timestamptz
 ) as
 $$
 declare
@@ -41,7 +42,8 @@ begin
            c.estimates_time,
            c.board_id,
            c.creator_id,
-           c.created_at
+           c.created_at,
+           c.updated_at
     into
         get.title,
         get.description,
@@ -51,7 +53,8 @@ begin
         get.estimates_time,
         get.board_id,
         get.creator_id,
-        get.created_at
+        get.created_at,
+        get.updated_at
 
     from cards._ as c
     where c.id = _card_id
@@ -72,6 +75,7 @@ exception
         board_id := null;
         creator_id := null;
         created_at := null;
+        updated_at := null;
         error := format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception);
         return;
 
@@ -92,7 +96,8 @@ alter function cards.get(
     out estimates_time integer,
     out board_id uuid,
     out creator_id uuid,
-    out created_at timestamptz
+    out created_at timestamptz,
+    out updated_at timestamptz
     ) owner to postgres;
 
 grant execute on function cards.get(
@@ -107,7 +112,8 @@ grant execute on function cards.get(
     out estimates_time integer,
     out board_id uuid,
     out creator_id uuid,
-    out created_at timestamptz
+    out created_at timestamptz,
+    out updated_at timestamptz
     ) to postgres;
 
 revoke all on function cards.get(
@@ -122,5 +128,6 @@ revoke all on function cards.get(
     out estimates_time integer,
     out board_id uuid,
     out creator_id uuid,
-    out created_at timestamptz
+    out created_at timestamptz,
+    out updated_at timestamptz
     ) from public;
