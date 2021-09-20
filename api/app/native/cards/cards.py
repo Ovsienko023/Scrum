@@ -14,6 +14,7 @@ from app.native.cards import (
     ErrorStatusNotFound,
     ErrorPriorityNotFound,
     ErrorDeveloperNotFound,
+    ErrorNotFieldsToChange,
 )
 
 
@@ -161,9 +162,13 @@ async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
             raise ErrorStatusNotFound
         if error["reason"] == "not_found" and error["description"] == "_board_id":
             raise ErrorBordNotFound
-        if error["reason"] == "not_found" and error["description"] == "_creator_id":
-            raise ErrorDatabase
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBordNotFound
+        if error["reason"] == "not_found" and error["description"] == "fields":
+            raise ErrorNotFieldsToChange
 
         raise ErrorDatabase
+
+    logger.info(f"Card {msg.card_id} updated.")
 
     return None

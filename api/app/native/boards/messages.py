@@ -25,3 +25,9 @@ class MessageCreateBoard:
 class MessageCreatedBoard:
     board_id: UUID
     created_at: datetime
+
+
+@dataclass
+class MessageUpdateBoard:
+    board_id: UUID
+    title: str

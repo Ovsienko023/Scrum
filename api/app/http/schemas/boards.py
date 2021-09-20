@@ -12,3 +12,14 @@ class SchemaCreateBoard(Schema):
         required=True,
         validate=validate.Length(min=1),
     )
+
+
+class SchemaUpdateBoard(Schema):
+    board_id = fields.UUID(
+        required=True,
+    )
+
+    title = fields.Str(
+        required=True,
+        validate=validate.Length(min=1),
+    )

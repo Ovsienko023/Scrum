@@ -20,3 +20,7 @@ class ErrorBordNotFound(Exception):
 
 class ErrorEstimatesTime(Exception):
     pass
+
+
+class ErrorNotFieldsToChange(Exception):
+    pass

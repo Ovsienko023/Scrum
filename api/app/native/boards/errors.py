@@ -4,3 +4,7 @@ class ErrorBoardIdNotFound(Exception):
 
 class ErrorTitleAlreadyExists(Exception):
     pass
+
+
+class ErrorNotFieldsToChange(Exception):
+    pass
