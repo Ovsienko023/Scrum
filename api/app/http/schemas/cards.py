@@ -98,3 +98,22 @@ class SchemaUpdateCard(Schema):
 
         hours = EstimationTime().convert_to_hours(times=value)  # todo try except
         return hours
+
+
+class SchemaGetReport(Schema):
+    board_id = fields.UUID(
+        required=False,
+        missing=None,
+    )
+    status_id = fields.UUID(
+        required=False,
+        missing=None,
+    )
+    priority_id = fields.UUID(
+        required=False,
+        missing=None,
+    )
+    developer_id = fields.UUID(
+        required=False,
+        missing=None,
+    )

@@ -3,12 +3,15 @@ from aiohttp import web
 from internal.container import DI_DATABASE_CLIENT, DI_LOGGER
 from internal.database.errors import ErrorDatabase
 from app.constants import APP_CONTAINER
+from app.native.estimation import EstimationTime
 from app.native.cards import (
     MessageCard,
     MessageGetCard,
     MessageCreateCard,
     MessageCreatedCard,
     MessageUpdateCard,
+    MessageGetReport,
+    MessageReported,
     ErrorCardIdNotFound,
     ErrorBordNotFound,
     ErrorStatusNotFound,
@@ -172,3 +175,74 @@ async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
     logger.info(f"Card {msg.card_id} updated.")
 
     return None
+
+
+async def get_report(app: web.Application, msg: MessageGetReport) -> MessageReported:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = """
+        select *
+        from cards.report(
+            %(board_id)s,
+            %(status_id)s,
+            %(priority_id)s,
+            %(developer_id)s
+        )
+    """
+    params = {
+        "board_id": msg.board_id,
+        "status_id": msg.status_id,
+        "priority_id": msg.priority_id,
+        "developer_id": msg.developer_id,
+    }
+
+    try:
+        result = await client.fetchall(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result[0].get("error")
+
+    if error is not None:
+        logger.error(f"Failing to get report: {error}")
+
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBordNotFound
+        if error["reason"] == "not_found" and error["description"] == "_status_id":
+            raise ErrorStatusNotFound
+        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+            raise ErrorPriorityNotFound
+        if error["reason"] == "not_found" and error["description"] == "_developer_id":
+            raise ErrorDeveloperNotFound
+
+        raise ErrorDatabase
+
+    message = MessageReported(
+        estimation=EstimationTime(0),
+        cards=[],
+    )
+
+    for card in result:
+        message.estimation += EstimationTime(
+            hours=card.get("estimates_time")
+        )
+
+        item = MessageCard(
+            card_id=card.get("card_id"),
+            title=card.get("title"),
+            description=card.get("description"),
+            developer_id=card.get("developer_id"),
+            priority=card.get("priority"),
+            status=card.get("status"),
+            estimates_time=card.get("estimates_time"),
+            board_id=card.get("board_id"),
+            creator_id=card.get("creator_id"),
+            created_at=card.get("created_at"),
+            updated_at=card.get("updated_at"),
+        )
+        message.cards.append(item)
+
+    return message

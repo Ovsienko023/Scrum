@@ -13,5 +13,5 @@ def setup_routes():
         web.post("/cards", cards.create_card),
         web.get("/cards/{card_id}", cards.get_card),
         web.patch("/cards/{card_id}", cards.update_card),
-
+        web.get("/cards/report", cards.get_report),
     ]
