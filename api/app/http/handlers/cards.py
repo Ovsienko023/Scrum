@@ -41,7 +41,6 @@ async def get_card(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -89,7 +88,6 @@ async def create_card(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -136,7 +134,6 @@ async def update_card(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -165,11 +162,7 @@ async def get_report(request) -> web.Response:
     container = request.app[APP_CONTAINER]
     logger = container.resolve(DI_LOGGER)
 
-    try:
-        data = await request.json()
-    except ValueError as err:
-        logger.error(f"Failed to update card.  ValueError: {err}")
-        return errors.done(400, ERROR_BAD_REQUEST)
+    data = dict(request.match_info)
 
     schema = SchemaGetReport()
 
@@ -181,7 +174,6 @@ async def get_report(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -212,7 +204,7 @@ async def get_report(request) -> web.Response:
                 "developer_id": str(card.developer_id),
                 "priority": card.priority,
                 "status": card.status,
-                "estimates_time": str(card.estimates_time),  # todo del str()
+                "estimates_time": str(card.estimates_time),
                 "board_id": str(card.board_id),
                 "creator_id": str(card.creator_id),
                 "created_at": round(card.created_at.timestamp()),

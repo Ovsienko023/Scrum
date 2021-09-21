@@ -10,8 +10,9 @@ def setup_routes():
         web.get("/boards/{board_id}", boards.get_board),
         web.patch("/boards/{board_id}", boards.update_board),
 
+        web.get("/cards/report", cards.get_report),
         web.post("/cards", cards.create_card),
         web.get("/cards/{card_id}", cards.get_card),
         web.patch("/cards/{card_id}", cards.update_card),
-        web.get("/cards/report", cards.get_report),
+
     ]
