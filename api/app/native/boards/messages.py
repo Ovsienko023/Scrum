@@ -38,3 +38,8 @@ class MessageUpdateBoard:
 class MessageBoards:
     count: int
     boards: List[MessageBoard]
+
+
+@dataclass
+class MessageRemoveBoard:
+    board_id: UUID

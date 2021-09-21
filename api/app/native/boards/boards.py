@@ -10,6 +10,7 @@ from app.native.boards import (
     MessageCreateBoard,
     MessageCreatedBoard,
     MessageUpdateBoard,
+    MessageRemoveBoard,
     ErrorBoardIdNotFound,
     ErrorTitleAlreadyExists,
     ErrorNotFieldsToChange,
@@ -153,9 +154,45 @@ async def update_board(app: web.Application, msg: MessageUpdateBoard) -> None:
         logger.error(f"Failing to update board: {error}")
         if error["reason"] == "not_found" and error["description"] == "fields":
             raise ErrorNotFieldsToChange
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBoardIdNotFound
 
         raise ErrorDatabase
 
     logger.info(f"Board {msg.board_id} updated.")
+
+    return None
+
+
+async def remove_board(app: web.Application, msg: MessageRemoveBoard) -> None:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = """
+        select *
+        from boards.delete(
+            %(board_id)s
+        )
+    """
+    params = {
+        "board_id": msg.board_id,
+    }
+
+    try:
+        result = await client.fetchone(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to update board: {error}")
+        if error["reason"] == "not_found" and error["description"] == "_board_id":
+            raise ErrorBoardIdNotFound
+
+        raise ErrorDatabase
+
+    logger.info(f"Board {msg.board_id} deleted.")
 
     return None

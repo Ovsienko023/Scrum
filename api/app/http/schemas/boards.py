@@ -23,3 +23,9 @@ class SchemaUpdateBoard(Schema):
         required=True,
         validate=validate.Length(min=1),
     )
+
+
+class SchemaRemoveBoard(Schema):
+    board_id = fields.UUID(
+        required=True,
+    )

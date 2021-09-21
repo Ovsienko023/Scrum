@@ -4,13 +4,14 @@ from marshmallow import ValidationError
 from internal.database.errors import ErrorDatabase
 from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
-from app.http.schemas.boards import SchemaCreateBoard, SchemaGetBoard, SchemaUpdateBoard
+from app.http.schemas.boards import SchemaCreateBoard, SchemaGetBoard, SchemaUpdateBoard, SchemaRemoveBoard
 from app.http.errors import ErrorContainer
 from app.native.boards import (
     boards,
     MessageGetBoard,
     MessageCreateBoard,
     MessageUpdateBoard,
+    MessageRemoveBoard,
     ErrorBoardIdNotFound,
     ErrorTitleAlreadyExists,
     ErrorNotFieldsToChange,
@@ -156,6 +157,38 @@ async def update_board(request) -> web.Response:
         return errors.done(500, ERROR_DATABASE)
     except Exception as err:
         logger.error(f"Failed to update board. {type(err)}: {err}")
+        return errors.done(500, ERROR_UNKNOWN)
+
+    return web.json_response()
+
+
+async def remove_board(request) -> web.Response:
+    errors = ErrorContainer()
+    container = request.app[APP_CONTAINER]
+    logger = container.resolve(DI_LOGGER)
+
+    data = {"board_id":  request.match_info.get("board_id")}
+
+    schema = SchemaRemoveBoard()
+
+    try:
+        message = MessageRemoveBoard(**schema.load(data))
+    except ValidationError as err:
+        logger.error("Failed to remove board. Validation error.")
+        for field, error in err.messages.items():
+            logger.error(f"Invalid field '{field}'. {error}")
+            errors.add(f"invalid.{field}", error)
+
+        return errors.done(400, ERROR_BAD_REQUEST)
+
+    try:
+        await boards.remove_board(app=request.app, msg=message)
+    except ErrorBoardIdNotFound:
+        return errors.done(404, ERROR_BOARD_ID_NOT_FOUND)
+    except ErrorDatabase:
+        return errors.done(500, ERROR_DATABASE)
+    except Exception as err:
+        logger.error(f"Failed to remove board. {type(err)}: {err}")
         return errors.done(500, ERROR_UNKNOWN)
 
     return web.json_response()
