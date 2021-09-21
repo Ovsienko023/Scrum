@@ -21,6 +21,103 @@ declare
     _exception     text;
 begin
 
+    if _board_id is not null
+        and not exists(select 1
+                       from boards._
+                       where id = _board_id)
+    then
+        error := '{"code": 1, "reason": "not_found", "description": "_board_id"}';
+
+        return query with err as
+                              (values  (error::jsonb,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::uuid,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::integer,
+                                        null::uuid,
+                                        null::uuid,
+                                        null::timestamptz,
+                                        null::timestamptz))
+                              select *
+                              from err;
+        return;
+    end if;
+
+    if _status_id is not null
+        and not exists(select 1
+                       from statuses._
+                       where id = _status_id)
+    then
+        error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
+
+        return query with err as
+                              (values  (error::jsonb,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::uuid,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::integer,
+                                        null::uuid,
+                                        null::uuid,
+                                        null::timestamptz,
+                                        null::timestamptz))
+                              select *
+                              from err;
+        return;
+    end if;
+
+    if _priority_id is not null
+        and not exists(select 1
+                       from priorities._
+                       where id = _priority_id)
+    then
+        error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
+
+        return query with err as
+                              (values  (error::jsonb,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::uuid,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::integer,
+                                        null::uuid,
+                                        null::uuid,
+                                        null::timestamptz,
+                                        null::timestamptz))
+                              select *
+                              from err;
+        return;
+    end if;
+
+
+    if _developer_id is not null
+        and not exists(select 1
+                       from users._
+                       where id = _developer_id)
+    then
+        error := '{"code": 1, "reason": "not_found", "description": "_developer_id"}';
+
+        return query with err as
+                              (values  (error::jsonb,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::uuid,
+                                        null::varchar,
+                                        null::varchar,
+                                        null::integer,
+                                        null::uuid,
+                                        null::uuid,
+                                        null::timestamptz,
+                                        null::timestamptz))
+                              select *
+                              from err;
+        return;
+    end if;
+
     return query (
         with tab as (
             select null::jsonb                                                 as error,
@@ -66,88 +163,86 @@ begin
                    c.updated_at      as updated_at
         from tab as c);
 
--- exception
---     when others then
---         get stacked diagnostics _exception = PG_EXCEPTION_CONTEXT;
---         _exception = _exception || ' | ' || SQLERRM || ' | ' || SQLSTATE;
---         raise
---             notice 'ERROR: % ', _exception;
---
---         return query with t as (
---             values (errors.exception(_exception),
---                     null::uuid,
---                     null::uuid,
---                     null::timestamptz,
---                     null::varchar,
---                     null::varchar,
---                     null::varchar,
---                     null::jsonb))
---                      select *
---                      from t;
+
+exception
+    when others then
+        get stacked diagnostics _exception = PG_EXCEPTION_CONTEXT;
+        _exception = _exception || ' | ' || SQLERRM || ' | ' || SQLSTATE;
+        raise
+            notice 'ERROR: % ', _exception;
+
+        return query with t as (
+            values (format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception)::jsonb,
+                    null::varchar,
+                    null::varchar,
+                    null::uuid,
+                    null::varchar,
+                    null::varchar,
+                    null::integer,
+                    null::uuid,
+                    null::uuid,
+                    null::timestamptz,
+                    null::timestamptz))
+                     select *
+                     from t;
 end ;
 $$
     language plpgsql stable
                      security definer;
---
--- alter function users.search(
---     _invoker_id uuid,
---     _sort_field varchar,
---     _sort_order int,
---     _page int,
---     _page_size int,
---     _locale_id varchar,
---     _time_zone_id varchar,
---     _display_name varchar,
---     _role_id uuid,
---     --
---     out error jsonb,
---     out user_id uuid,
---     out creator_id uuid,
---     out created_at timestamptz,
---     out locale_id varchar,
---     out time_zone_id varchar,
---     out display_name varchar,
---     out payload jsonb
---     ) owner to postgres;
---
--- grant execute on function users.search(
---     _invoker_id uuid,
---     _sort_field varchar,
---     _sort_order int,
---     _page int,
---     _page_size int,
---     _locale_id varchar,
---     _time_zone_id varchar,
---     _display_name varchar,
---     _role_id uuid,
---     --
---     out error jsonb,
---     out user_id uuid,
---     out creator_id uuid,
---     out created_at timestamptz,
---     out locale_id varchar,
---     out time_zone_id varchar,
---     out display_name varchar,
---     out payload jsonb
---     ) to postgres, web;
---
--- revoke all on function users.search(
---     _invoker_id uuid,
---     _sort_field varchar,
---     _sort_order int,
---     _page int,
---     _page_size int,
---     _locale_id varchar,
---     _time_zone_id varchar,
---     _display_name varchar,
---     _role_id uuid,
---     --
---     out error jsonb,
---     out user_id uuid,
---     out creator_id uuid,
---     out created_at timestamptz,
---     out locale_id varchar,
---     out time_zone_id varchar,
---     out display_name varchar,
---     out payload jsonb
---     ) from public;
+
+alter function cards.report(
+    _board_id uuid,
+    _status_id uuid,
+    _priority_id uuid,
+    _developer_id uuid,
+    --
+    out error jsonb,
+    out title varchar,
+    out description varchar,
+    out developer_id uuid,
+    out priority varchar,
+    out status varchar,
+    out estimates_time integer,
+    out board_id uuid,
+    out creator_id uuid,
+    out created_at timestamptz,
+    out updated_at timestamptz
+    ) owner to postgres;
+
+grant execute on function cards.report(
+    _board_id uuid,
+    _status_id uuid,
+    _priority_id uuid,
+    _developer_id uuid,
+    --
+    out error jsonb,
+    out title varchar,
+    out description varchar,
+    out developer_id uuid,
+    out priority varchar,
+    out status varchar,
+    out estimates_time integer,
+    out board_id uuid,
+    out creator_id uuid,
+    out created_at timestamptz,
+    out updated_at timestamptz
+    ) to postgres;
+
+revoke all on function cards.report(
+    _board_id uuid,
+    _status_id uuid,
+    _priority_id uuid,
+    _developer_id uuid,
+    --
+    out error jsonb,
+    out title varchar,
+    out description varchar,
+    out developer_id uuid,
+    out priority varchar,
+    out status varchar,
+    out estimates_time integer,
+    out board_id uuid,
+    out creator_id uuid,
+    out created_at timestamptz,
+    out updated_at timestamptz
+    ) from public;
