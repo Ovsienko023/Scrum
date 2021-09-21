@@ -187,7 +187,7 @@ async def remove_board(app: web.Application, msg: MessageRemoveBoard) -> None:
 
     error = result.get("error")
     if error is not None:
-        logger.error(f"Failing to update board: {error}")
+        logger.error(f"Failing to remove board: {error}")
         if error["reason"] == "not_found" and error["description"] == "_board_id":
             raise ErrorBoardIdNotFound
 
@@ -196,3 +196,5 @@ async def remove_board(app: web.Application, msg: MessageRemoveBoard) -> None:
     logger.info(f"Board {msg.board_id} deleted.")
 
     return None
+
+

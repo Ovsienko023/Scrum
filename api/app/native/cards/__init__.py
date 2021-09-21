@@ -6,6 +6,7 @@ from app.native.cards.messages import (
     MessageUpdateCard,
     MessageGetReport,
     MessageReported,
+    MessageRemoveCard,
 )
 
 from app.native.cards.constants import (
@@ -35,6 +36,7 @@ __all__ = [
     "MessageUpdateCard",
     "MessageGetReport",
     "MessageReported",
+    "MessageRemoveCard",
 
     "ErrorCardIdNotFound",
     "ErrorDeveloperNotFound",

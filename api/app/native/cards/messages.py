@@ -74,3 +74,8 @@ class MessageGetReport:
 class MessageReported:
     estimation: str or None
     cards: List[MessageCard]
+
+
+@dataclass
+class MessageRemoveCard:
+    card_id: int

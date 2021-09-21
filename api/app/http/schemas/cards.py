@@ -117,3 +117,10 @@ class SchemaGetReport(Schema):
         required=False,
         missing=None,
     )
+
+
+class SchemaRemoveCard(Schema):
+    card_id = fields.Int(
+        required=True,
+        validate=validate.Range(min=1),
+    )

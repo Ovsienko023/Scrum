@@ -12,6 +12,7 @@ from app.native.cards import (
     MessageUpdateCard,
     MessageGetReport,
     MessageReported,
+    MessageRemoveCard,
     ErrorCardIdNotFound,
     ErrorBordNotFound,
     ErrorStatusNotFound,
@@ -246,3 +247,37 @@ async def get_report(app: web.Application, msg: MessageGetReport) -> MessageRepo
         message.cards.append(item)
 
     return message
+
+
+async def remove_card(app: web.Application, msg: MessageRemoveCard) -> None:
+    container = app[APP_CONTAINER]
+    client = container.resolve(DI_DATABASE_CLIENT)
+    logger = container.resolve(DI_LOGGER)
+
+    query = """
+        select *
+        from cards.delete(
+            %(card_id)s
+        )
+    """
+    params = {
+        "card_id": msg.card_id,
+    }
+
+    try:
+        result = await client.fetchone(query, params)
+    except Exception as err:
+        logger.error(f"Failing to database: {type(err)}, {err}")
+        raise ErrorDatabase
+
+    error = result.get("error")
+    if error is not None:
+        logger.error(f"Failing to remove card: {error}")
+        if error["reason"] == "not_found" and error["description"] == "_card_id":
+            raise ErrorCardIdNotFound
+
+        raise ErrorDatabase
+
+    logger.info(f"Card {msg.card_id} deleted.")
+
+    return None
