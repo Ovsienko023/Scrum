@@ -1,5 +1,6 @@
 from app.native.boards.messages import (
     MessageBoard,
+    MessageBoards,
     MessageGetBoard,
     MessageCreateBoard,
     MessageCreatedBoard,
@@ -11,6 +12,7 @@ from app.native.boards.constants import ERROR_TITLE_ALREADY_EXISTS, ERROR_BOARD_
 
 __all__ = [
     "MessageBoard",
+    "MessageBoards",
     "MessageGetBoard",
     "MessageCreateBoard",
     "MessageCreatedBoard",

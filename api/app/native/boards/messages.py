@@ -1,11 +1,12 @@
 from uuid import UUID
+from typing import List
 from datetime import datetime
 from dataclasses import dataclass
 
 
 @dataclass
 class MessageGetBoard:
-    board_id: int
+    board_id: UUID
 
 
 @dataclass
@@ -31,3 +32,9 @@ class MessageCreatedBoard:
 class MessageUpdateBoard:
     board_id: UUID
     title: str
+
+
+@dataclass
+class MessageBoards:
+    count: int
+    boards: List[MessageBoard]

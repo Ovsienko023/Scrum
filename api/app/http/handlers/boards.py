@@ -37,7 +37,6 @@ async def get_board(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -54,6 +53,33 @@ async def get_board(request) -> web.Response:
             "title": result.title,
             "creator_id": str(result.creator_id),
             "created_at": round(result.created_at.timestamp())
+    })
+
+
+async def get_boards(request) -> web.Response:
+    errors = ErrorContainer()
+    container = request.app[APP_CONTAINER]
+    logger = container.resolve(DI_LOGGER)
+
+    try:
+        result = await boards.get_boards(app=request.app)
+    except ErrorDatabase:
+        return errors.done(500, ERROR_DATABASE)
+    except Exception as err:
+        logger.error(f"Failed to get boards. {type(err)}: {err}")
+        return errors.done(500, ERROR_UNKNOWN)
+
+    return web.json_response({
+        "count": result.count,
+        "boards": [
+            {
+                "id": str(board.board_id),
+                "title": board.title,
+                "creator_id": str(board.creator_id),
+                "created_at": round(board.created_at.timestamp())
+            }
+            for board in result.boards
+        ]
     })
 
 
@@ -78,7 +104,6 @@ async def create_board(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
@@ -119,7 +144,6 @@ async def update_board(request) -> web.Response:
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
 
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
