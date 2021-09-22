@@ -11,22 +11,15 @@ declare
     _exception     text;
 begin
 
-    return query (
-        with tab as (
-                    select     null::jsonb       as error,
-                               b.id              as board_id,
-                               b.title           as title,
-                               b.creator_id      as creator_id,
-                               b.created_at      as created_at
-            from boards._ b
-            where b.deleted_at is null
-        )
-        select     null::jsonb       as error,
-                   b.board_id        as board_id,
-                   b.title           as title,
-                   b.creator_id      as creator_id,
-                   b.created_at      as created_at
-        from tab as b);
+    return query (select
+                       null::jsonb       as error,
+                       b.id              as board_id,
+                       b.title           as title,
+                       b.creator_id      as creator_id,
+                       b.created_at      as created_at
+                    from boards._ b
+                    where b.deleted_at is null);
+    return;
 
 
 exception
@@ -36,14 +29,13 @@ exception
         raise
             notice 'ERROR: % ', _exception;
 
-        return query with t as (
+        return query
             values (format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception)::jsonb,
                     null::uuid,
                     null::varchar,
                     null::uuid,
-                    null::timestamptz))
-                     select *
-                     from t;
+                    null::timestamptz);
+        return;
 end ;
 $$
     language plpgsql stable

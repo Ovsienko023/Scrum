@@ -28,20 +28,18 @@ begin
     then
         error := '{"code": 1, "reason": "not_found", "description": "_board_id"}';
 
-        return query with err as
-                              (values  (error::jsonb,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::uuid,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::integer,
-                                        null::uuid,
-                                        null::uuid,
-                                        null::timestamptz,
-                                        null::timestamptz))
-                              select *
-                              from err;
+        return query
+            values( error::jsonb,
+                    null::varchar,
+                    null::varchar,
+                    null::uuid,
+                    null::varchar,
+                    null::varchar,
+                    null::integer,
+                    null::uuid,
+                    null::uuid,
+                    null::timestamptz,
+                    null::timestamptz);
         return;
     end if;
 
@@ -52,20 +50,18 @@ begin
     then
         error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
 
-        return query with err as
-                              (values  (error::jsonb,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::uuid,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::integer,
-                                        null::uuid,
-                                        null::uuid,
-                                        null::timestamptz,
-                                        null::timestamptz))
-                              select *
-                              from err;
+        return query
+            values( error::jsonb,
+                    null::varchar,
+                    null::varchar,
+                    null::uuid,
+                    null::varchar,
+                    null::varchar,
+                    null::integer,
+                    null::uuid,
+                    null::uuid,
+                    null::timestamptz,
+                    null::timestamptz);
         return;
     end if;
 
@@ -76,20 +72,18 @@ begin
     then
         error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
 
-        return query with err as
-                              (values  (error::jsonb,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::uuid,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::integer,
-                                        null::uuid,
-                                        null::uuid,
-                                        null::timestamptz,
-                                        null::timestamptz))
-                              select *
-                              from err;
+        return query
+            values( error::jsonb,
+                    null::varchar,
+                    null::varchar,
+                    null::uuid,
+                    null::varchar,
+                    null::varchar,
+                    null::integer,
+                    null::uuid,
+                    null::uuid,
+                    null::timestamptz,
+                    null::timestamptz);
         return;
     end if;
 
@@ -101,26 +95,22 @@ begin
     then
         error := '{"code": 1, "reason": "not_found", "description": "_developer_id"}';
 
-        return query with err as
-                              (values  (error::jsonb,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::uuid,
-                                        null::varchar,
-                                        null::varchar,
-                                        null::integer,
-                                        null::uuid,
-                                        null::uuid,
-                                        null::timestamptz,
-                                        null::timestamptz))
-                              select *
-                              from err;
+        return query
+            values( error::jsonb,
+                    null::varchar,
+                    null::varchar,
+                    null::uuid,
+                    null::varchar,
+                    null::varchar,
+                    null::integer,
+                    null::uuid,
+                    null::uuid,
+                    null::timestamptz,
+                    null::timestamptz);
         return;
     end if;
 
-    return query (
-        with tab as (
-            select null::jsonb                                                 as error,
+    return query (select null::jsonb                                           as error,
                    c.title                                                     as title,
                    c.description                                               as description,
                    c.developer_id                                              as developer_id,
@@ -149,20 +139,8 @@ begin
                     _developer_id is null
                     or c.developer_id = _developer_id
                 )
-        )
-        select     null::jsonb       as error,
-                   c.title           as title,
-                   c.description     as description,
-                   c.developer_id    as developer_id,
-                   c.priority        as priority,
-                   c.status          as status,
-                   c.estimates_time  as estimates_time,
-                   c.board_id        as board_id,
-                   c.creator_id      as creator_id,
-                   c.created_at      as created_at,
-                   c.updated_at      as updated_at
-        from tab as c);
-
+        );
+    return;
 
 exception
     when others then
@@ -171,7 +149,7 @@ exception
         raise
             notice 'ERROR: % ', _exception;
 
-        return query with t as (
+        return query
             values (format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception)::jsonb,
                     null::varchar,
                     null::varchar,
@@ -182,9 +160,7 @@ exception
                     null::uuid,
                     null::uuid,
                     null::timestamptz,
-                    null::timestamptz))
-                     select *
-                     from t;
+                    null::timestamptz);
 end ;
 $$
     language plpgsql stable
