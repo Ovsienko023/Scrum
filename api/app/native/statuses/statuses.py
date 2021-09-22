@@ -1,5 +1,6 @@
 from aiohttp import web
 
+from internal.caching import cache
 from internal.container import DI_DATABASE_CLIENT, DI_LOGGER
 from internal.database.errors import ErrorDatabase
 from app.constants import APP_CONTAINER
@@ -13,14 +14,18 @@ async def get_statuses(app: web.Application) -> MessageStatuses:
     container = app[APP_CONTAINER]
     client = container.resolve(DI_DATABASE_CLIENT)
     logger = container.resolve(DI_LOGGER)
+    statuses = cache.get("statuses")
 
-    query = "select * from statuses.search()"
-
-    try:
-        records = await client.fetchall(query)
-    except Exception as err:
-        logger.error(f"Failing to database: {type(err)}, {err}")
-        raise ErrorDatabase
+    if not statuses:
+        query = "select * from statuses.search()"
+        try:
+            records = await client.fetchall(query)
+            cache["statuses"] = records
+        except Exception as err:
+            logger.error(f"Failing to database: {type(err)}, {err}")
+            raise ErrorDatabase
+    else:
+        records = statuses
 
     message = MessageStatuses(
         count=len(records),

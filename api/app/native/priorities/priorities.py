@@ -1,5 +1,6 @@
 from aiohttp import web
 
+from internal.caching import cache
 from internal.container import DI_DATABASE_CLIENT, DI_LOGGER
 from internal.database.errors import ErrorDatabase
 from app.constants import APP_CONTAINER
@@ -13,14 +14,18 @@ async def get_priorities(app: web.Application) -> MessagePriorities:
     container = app[APP_CONTAINER]
     client = container.resolve(DI_DATABASE_CLIENT)
     logger = container.resolve(DI_LOGGER)
+    priorities = cache.get("priorities")
 
-    query = "select * from priorities.search()"
-
-    try:
-        records = await client.fetchall(query)
-    except Exception as err:
-        logger.error(f"Failing to database: {type(err)}, {err}")
-        raise ErrorDatabase
+    if not priorities:
+        query = "select * from priorities.search()"
+        try:
+            records = await client.fetchall(query)
+            cache["priorities"] = records
+        except Exception as err:
+            logger.error(f"Failing to database: {type(err)}, {err}")
+            raise ErrorDatabase
+    else:
+        records = priorities
 
     message = MessagePriorities(
         count=len(records),
