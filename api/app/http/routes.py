@@ -1,5 +1,5 @@
 from aiohttp import web
-from app.http.handlers import users, boards, cards, priorities
+from app.http.handlers import users, boards, cards, priorities, statuses
 
 
 def setup_routes():
@@ -19,4 +19,5 @@ def setup_routes():
         web.delete("/cards/{card_id}", cards.remove_card),
 
         web.get("/misc/priorities", priorities.get_priorities),
+        web.get("/misc/statuses", statuses.get_statuses),
     ]
