@@ -23,9 +23,7 @@ async def init_app(cnt) -> web.Application:
 def main():
     logger = container.resolve(DI_LOGGER)
 
-    loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(init_app(cnt=container))
-
+    app = init_app(cnt=container)
     web.run_app(app, host="127.0.0.1", port=8888, access_log=logger)
 
 
