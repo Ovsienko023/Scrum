@@ -10,6 +10,7 @@ punq = "*" # 0.5
 marshmallow = "*"
 psycopg2-binary = "2.9.1"
 aiopg = "*"
+pyjwt = "*"
 
 [dev-packages]
 

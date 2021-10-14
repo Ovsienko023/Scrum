@@ -1,5 +1,7 @@
+import time
 from hashlib import sha256
 
+import jwt
 from aiohttp import web
 
 from internal.database.errors import ErrorDatabase
@@ -16,7 +18,7 @@ async def get_token(app: web.Application, msg: MessageGetToken) -> MessageToken:
     client = container.resolve(DI_DATABASE_CLIENT)
     logger = container.resolve(DI_LOGGER)
 
-    password_hash = sha256(msg.login.encode('utf-8')).hexdigest()
+    password_hash = sha256(msg.login.encode("utf-8")).hexdigest()
 
     query = """
         select *
@@ -40,9 +42,13 @@ async def get_token(app: web.Application, msg: MessageGetToken) -> MessageToken:
         logger.error(f"Failing to get token: {error}")
         # if error["reason"] == "not_found" and error["description"] == "_card_id":
         #     raise ErrorCardIdNotFound
-
         raise ErrorDatabase
 
+    data = {
+        "user_id": str(result.get("user_id")),
+    }
+    jwt_token = jwt.encode(data, "secret", algorithm="HS256")
+
     return MessageToken(
-        access_token=result.get("access_token")
+        access_token=jwt_token
     )
