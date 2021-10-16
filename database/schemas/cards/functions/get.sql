@@ -33,12 +33,8 @@ begin
     select c.title,
            c.description,
            c.developer_id,
-           (select _.title
-            from priorities._
-                where id = c.priority_id),
-           (select _.title
-            from statuses._
-                where id = c.status_id),
+           c.priority,
+           c.status,
            c.estimates_time,
            c.board_id,
            c.creator_id,

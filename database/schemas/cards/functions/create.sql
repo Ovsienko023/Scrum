@@ -2,8 +2,7 @@ create or replace function cards.create(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
     _board_id       uuid,
     _creator_id     uuid,
     _estimates_time int,
@@ -46,17 +45,9 @@ begin
 
     if not exists(select 1
               from priorities._
-              where id = _priority_id)
+              where title = _priority)
     then
-        error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
-        return;
-    end if;
-
-    if not exists(select 1
-              from statuses._
-              where id = _status_id)
-    then
-        error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
+        error := '{"code": 1, "reason": "not_found", "description": "_priority"}';
         return;
     end if;
 
@@ -82,8 +73,8 @@ begin
         return;
     end if;
 
-    insert into cards._ as c (title, description, developer_id, priority_id, status_id, board_id, creator_id, estimates_time, deleted_at)
-    values (_title, _description, _developer_id, _priority_id, _status_id, _board_id, _creator_id, _estimates_time, null)
+    insert into cards._ as c (title, description, developer_id, priority, status, board_id, creator_id, estimates_time, deleted_at)
+    values (_title, _description, _developer_id, _priority, 'New', _board_id, _creator_id, _estimates_time, null)
     returning c.id, c.created_at into card_id, created_at;
 
 exception
@@ -106,8 +97,7 @@ alter function cards.create(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
     _board_id       uuid,
     _creator_id     uuid,
     _estimates_time int,
@@ -121,8 +111,7 @@ grant execute on function cards.create(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
     _board_id       uuid,
     _creator_id     uuid,
     _estimates_time int,
@@ -136,8 +125,7 @@ revoke all on function cards.create(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
     _board_id       uuid,
     _creator_id     uuid,
     _estimates_time int,

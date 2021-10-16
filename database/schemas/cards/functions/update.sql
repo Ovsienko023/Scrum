@@ -3,8 +3,8 @@ create or replace function cards.update(
     _title          varchar = null,
     _description    varchar = null,
     _developer_id   uuid = null,
-    _priority_id    uuid = null,
-    _status_id      uuid = null,
+    _priority       varchar = null,
+    _status         varchar = null,
     _board_id       uuid = null,
     _estimates_time int = null,
     --
@@ -27,8 +27,8 @@ begin
     if _title is null and
     _description is null and
     _developer_id is null and
-    _priority_id  is null and
-    _status_id  is null and
+    _priority  is null and
+    _status  is null and
     _board_id is null and
     _estimates_time is null
     then
@@ -38,6 +38,8 @@ begin
 
     _title := nullif(trim(_title), '');
     _description := nullif(trim(_description), '');
+    _priority := nullif(trim(_priority), '');
+    _status := nullif(trim(_status), '');
 
     if _developer_id is not null and
         not exists(select 1
@@ -48,21 +50,21 @@ begin
         return;
     end if;
 
-    if _priority_id is not null and
+    if _priority is not null and
        not exists(select 1
           from priorities._
-          where id = _priority_id)
+          where title = _priority)
     then
-        error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
+        error := '{"code": 1, "reason": "not_found", "description": "_priority"}';
         return;
     end if;
 
-    if _status_id is not null and
+    if _status is not null and
        not exists(select 1
           from statuses._
-          where id = _status_id)
+          where title = _status)
     then
-        error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
+        error := '{"code": 1, "reason": "not_found", "description": "_status"}';
         return;
     end if;
 
@@ -85,8 +87,8 @@ begin
     set title          = coalesce(_title, title),
         description    = coalesce(_description, description),
         developer_id   = coalesce(_developer_id, developer_id),
-        priority_id    = coalesce(_priority_id, priority_id),
-        status_id      = coalesce(_status_id, status_id),
+        priority       = coalesce(_priority, priority),
+        status         = coalesce(_status, status),
         board_id       = coalesce(_board_id, board_id),
         estimates_time = coalesce(_estimates_time, estimates_time),
         updated_at     = now()
@@ -115,8 +117,8 @@ alter function cards.update(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
+    _status         varchar,
     _board_id       uuid,
     _estimates_time int,
     --
@@ -128,8 +130,8 @@ grant execute on function cards.update(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
+    _status         varchar,
     _board_id       uuid,
     _estimates_time int,
     --
@@ -141,8 +143,8 @@ revoke all on function cards.update(
     _title          varchar,
     _description    varchar,
     _developer_id   uuid,
-    _priority_id    uuid,
-    _status_id      uuid,
+    _priority       varchar,
+    _status         varchar,
     _board_id       uuid,
     _estimates_time int,
     --

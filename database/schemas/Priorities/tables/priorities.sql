@@ -1,7 +1,6 @@
 create table if not exists priorities._
 (
-    id       uuid primary key     default gen_random_uuid(),
-    title    varchar not null
+    title varchar  primary key
 );
 
 insert into priorities._ (title)

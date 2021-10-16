@@ -35,8 +35,7 @@ class MessageCreateCard:
     title: str
     description: str
     developer_id: UUID
-    priority_id: UUID
-    status_id: UUID
+    priority: str
     board_id: UUID
     creator_id: UUID
     estimation: str

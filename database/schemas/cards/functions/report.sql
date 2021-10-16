@@ -1,7 +1,7 @@
 create or replace function cards.report(
-    _board_id uuid = null,
-    _status_id uuid = null,
-    _priority_id uuid = null,
+    _board_id     uuid = null,
+    _status       varchar = null,
+    _priority     varchar = null,
     _developer_id uuid = null,
     --
     out error jsonb,
@@ -43,12 +43,12 @@ begin
         return;
     end if;
 
-    if _status_id is not null
+    if _status is not null
         and not exists(select 1
-                       from statuses._
-                       where id = _status_id)
+                       from statuses._ st
+                       where st.title = _status)
     then
-        error := '{"code": 1, "reason": "not_found", "description": "_status_id"}';
+        error := '{"code": 1, "reason": "not_found", "description": "_status"}';
 
         return query
             values( error::jsonb,
@@ -65,12 +65,12 @@ begin
         return;
     end if;
 
-    if _priority_id is not null
+    if _priority is not null
         and not exists(select 1
-                       from priorities._
-                       where id = _priority_id)
+                       from priorities._ pr
+                       where pr.title = _priority)
     then
-        error := '{"code": 1, "reason": "not_found", "description": "_priority_id"}';
+        error := '{"code": 1, "reason": "not_found", "description": "_priority"}';
 
         return query
             values( error::jsonb,
@@ -110,17 +110,17 @@ begin
         return;
     end if;
 
-    return query (select null::jsonb                                           as error,
-                   c.title                                                     as title,
-                   c.description                                               as description,
-                   c.developer_id                                              as developer_id,
-                   (select _.title from priorities._ where id = c.priority_id) as priority,
-                   (select _.title from statuses._ where id = c.status_id)     as status,
-                   c.estimates_time                                            as estimates_time,
-                   c.board_id                                                  as board_id,
-                   c.creator_id                                                as creator_id,
-                   c.created_at                                                as created_at,
-                   c.updated_at                                                as updated_at
+    return query (select null::jsonb   as error,
+                   c.title             as title,
+                   c.description       as description,
+                   c.developer_id      as developer_id,
+                   c.priority          as priority,
+                   c.status            as status,
+                   c.estimates_time    as estimates_time,
+                   c.board_id          as board_id,
+                   c.creator_id        as creator_id,
+                   c.created_at        as created_at,
+                   c.updated_at        as updated_at
             from cards._ c
             where c.deleted_at is null
               and (
@@ -128,12 +128,12 @@ begin
                     or c.board_id = _board_id
                 )
               and (
-                    _status_id is null
-                    or c.status_id = _status_id
+                    _status is null
+                    or c.status = _status
                 )
               and (
-                    _priority_id is null
-                    or c.priority_id = _priority_id
+                    _priority is null
+                    or c.priority = _priority
                 )
               and (
                     _developer_id is null
@@ -167,9 +167,9 @@ $$
                      security definer;
 
 alter function cards.report(
-    _board_id uuid,
-    _status_id uuid,
-    _priority_id uuid,
+    _board_id     uuid,
+    _status_id    varchar,
+    _priority_id  varchar,
     _developer_id uuid,
     --
     out error jsonb,
@@ -186,9 +186,9 @@ alter function cards.report(
     ) owner to postgres;
 
 grant execute on function cards.report(
-    _board_id uuid,
-    _status_id uuid,
-    _priority_id uuid,
+    _board_id     uuid,
+    _status       varchar,
+    _priority     varchar,
     _developer_id uuid,
     --
     out error jsonb,
@@ -205,9 +205,9 @@ grant execute on function cards.report(
     ) to postgres;
 
 revoke all on function cards.report(
-    _board_id uuid,
-    _status_id uuid,
-    _priority_id uuid,
+    _board_id     uuid,
+    _status       varchar,
+    _priority     varchar,
     _developer_id uuid,
     --
     out error jsonb,

@@ -71,8 +71,7 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
             %(title)s,
             %(description)s,
             %(developer_id)s,
-            %(priority_id)s,
-            %(status_id)s,
+            %(priority)s,
             %(board_id)s,
             %(creator_id)s,
             %(estimates_time)s
@@ -82,8 +81,7 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
         "title": msg.title,
         "description": msg.description,
         "developer_id": msg.developer_id,
-        "priority_id": msg.priority_id,
-        "status_id": msg.status_id,
+        "priority": msg.priority,
         "board_id": msg.board_id,
         "creator_id": msg.creator_id,
         "estimates_time": hours,
@@ -100,9 +98,9 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
         logger.error(f"Failing to create cards: {error}")
         if error["reason"] == "not_found" and error["description"] == "_developer_id":
             raise ErrorDeveloperNotFound
-        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+        if error["reason"] == "not_found" and error["description"] == "_priority":
             raise ErrorPriorityNotFound
-        if error["reason"] == "not_found" and error["description"] == "_status_id":
+        if error["reason"] == "not_found" and error["description"] == "_status":
             raise ErrorStatusNotFound
         if error["reason"] == "not_found" and error["description"] == "_board_id":
             raise ErrorBordNotFound

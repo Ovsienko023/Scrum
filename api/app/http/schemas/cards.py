@@ -22,11 +22,9 @@ class SchemaCreateCard(Schema):
     developer_id = fields.UUID(
         required=True,
     )
-    priority_id = fields.UUID(
-        required=True,
-    )
-    status_id = fields.UUID(
-        required=True,
+    priority = fields.Str(
+        required=True,  # todo добавить проверку из списка
+        validate=validate.Length(min=1),
     )
     board_id = fields.UUID(
         required=True,
