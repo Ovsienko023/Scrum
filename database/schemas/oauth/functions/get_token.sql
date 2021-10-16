@@ -13,7 +13,7 @@ begin
 
     _login := nullif(trim(_login), '');
     if _login is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_login"}}';
+        error := '{"code": 2, "reason": "required", "description": "_login"}';
         return;
     end if;
 
@@ -21,20 +21,20 @@ begin
                   from users._ u
                   where u.login = _login)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_login"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_login"}';
         return;
     end if;
 
     _password := nullif(trim(_password), '');
     if _password is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_password"}}';
+        error := '{"code": 2, "reason": "required", "description": "_password"}';
         return;
     end if;
     if not exists(select 1
                   from users._ u
                   where u.login = _login and u.hash = _password)
     then
-        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_password"}}';
+        error := '{"code": 1, "reason": "not_found", "description": "_password"}';
         return;
     end if;
 
@@ -52,7 +52,7 @@ exception
         raise notice 'ERROR: % ', _exception;
 
         user_id := null;
-        error := format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception);
+        error := format('{"code": -1, "reason": "unknown", "description": "%s"}',_exception);
         return;
 
 end;

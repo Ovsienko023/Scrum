@@ -40,7 +40,7 @@ exception
         _exception := _exception || ' | ' || SQLERRM || ' | ' || SQLSTATE;
         raise notice 'ERROR: % ', _exception;
 
-        error := format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception);
+        error := format('{"code": -1, "reason": "unknown", "description": "%s"}',_exception);
         return;
 
 end;

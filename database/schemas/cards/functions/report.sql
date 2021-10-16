@@ -150,7 +150,7 @@ exception
             notice 'ERROR: % ', _exception;
 
         return query
-            values (format('{"errors": {"code": -1, "reason": "unknown", "description": "%s"}}',_exception)::jsonb,
+            values (format('{"code": -1, "reason": "unknown", "description": "%s"}',_exception)::jsonb,
                     null::varchar,
                     null::varchar,
                     null::uuid,

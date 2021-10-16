@@ -14,13 +14,13 @@ begin
     _display_name := nullif(trim(_display_name), '');
 
     if _display_name is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_display_name"}}';
+        error := '{"code": 2, "reason": "required", "description": "_display_name"}';
         return;
     end if;
 
     _login := nullif(trim(_login), '');
     if _login is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_login"}}';
+        error := '{"code": 2, "reason": "required", "description": "_login"}';
         return;
     end if;
 
@@ -28,14 +28,14 @@ begin
               from users._
               where login = _login)
     then
-        error := '{"errors": {"code": 3, "reason": "exists", "description": "_login"}}';
+        error := '{"code": 3, "reason": "exists", "description": "_login"}';
         return;
     end if;
 
     _hash := nullif(trim(_hash), '');
 
     if _hash is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_hash"}}';
+        error := '{"code": 2, "reason": "required", "description": "_hash"}';
         return;
     end if;
 
@@ -51,7 +51,7 @@ exception
 
         user_id := null;
         created_at := null;
-        error := '{"errors": {"code": -1, "reason": "unknown", "description": "%"}}',_exception;
+        error := '{"code": -1, "reason": "unknown", "description": "%"}',_exception;
         return;
 
 end;
