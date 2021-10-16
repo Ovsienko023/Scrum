@@ -22,13 +22,6 @@ begin
         error := '{"code": 2, "reason": "required", "description": "_title"}';
         return;
     end if;
-    if exists(select 1
-              from cards._
-              where title = _title)
-    then
-        error := '{"code": 3, "reason": "exists", "description": "_title"}';
-        return;
-    end if;
 
     if _description is null then
         error := '{"code": 2, "reason": "required", "description": "_description"}';
