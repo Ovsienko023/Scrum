@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from app.native.estimation import EstimationTime
+from app.http.constants import STATUSES, PRIORITIES
 
 
 class SchemaGetCard(Schema):
@@ -23,8 +24,8 @@ class SchemaCreateCard(Schema):
         required=True,
     )
     priority = fields.Str(
-        required=True,  # todo добавить проверку из списка
-        validate=validate.Length(min=1),
+        required=True,
+        validate=validate.OneOf(PRIORITIES),
     )
     board_id = fields.UUID(
         required=True,
@@ -61,12 +62,14 @@ class SchemaUpdateCard(Schema):
         required=False,
         missing=None,
     )
-    priority_id = fields.UUID(
+    priority = fields.Str(
         required=False,
+        validate=validate.OneOf(PRIORITIES),
         missing=None,
     )
-    status_id = fields.UUID(
+    status = fields.Str(
         required=False,
+        validate=validate.OneOf(STATUSES),
         missing=None,
     )
     board_id = fields.UUID(
@@ -88,21 +91,20 @@ class SchemaUpdateCard(Schema):
             if (not row.isdigit()) and (row not in valid_name):
                 raise ValidationError("Value error: cannot be converted to hours.")
 
-        hours = EstimationTime().convert_to_hours(times=value)  # todo try except
-        return hours
-
 
 class SchemaGetReport(Schema):
     board_id = fields.UUID(
         required=False,
         missing=None,
     )
-    status_id = fields.UUID(
+    priority = fields.Str(
         required=False,
+        validate=validate.OneOf(PRIORITIES),
         missing=None,
     )
-    priority_id = fields.UUID(
+    status = fields.Str(
         required=False,
+        validate=validate.OneOf(STATUSES),
         missing=None,
     )
     developer_id = fields.UUID(

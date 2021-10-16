@@ -6,3 +6,7 @@ ERROR_DATABASE = "Error database"
 ERROR_UNKNOWN = "Error unknown"
 
 PUBLIC_KEY = "secret"
+
+
+PRIORITIES = ("Low", "Normal", "High", "Immediate")
+STATUSES = ("New", "In development", "Developed", "On hold", "Closed")

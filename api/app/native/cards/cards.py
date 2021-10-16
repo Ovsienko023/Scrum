@@ -130,8 +130,8 @@ async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
             %(title)s,
             %(description)s,
             %(developer_id)s,
-            %(priority_id)s,
-            %(status_id)s,
+            %(priority)s,
+            %(status)s,
             %(board_id)s,
             %(estimates_time)s
         )
@@ -141,8 +141,8 @@ async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
         "title": msg.title,
         "description": msg.description,
         "developer_id": msg.developer_id,
-        "priority_id": msg.priority_id,
-        "status_id": msg.status_id,
+        "priority": msg.priority,
+        "status": msg.status,
         "board_id": msg.board_id,
         "estimates_time": msg.estimation,
     }
@@ -160,9 +160,9 @@ async def update_card(app: web.Application, msg: MessageUpdateCard) -> None:
             raise ErrorCardIdNotFound
         if error["reason"] == "not_found" and error["description"] == "_developer_id":
             raise ErrorDeveloperNotFound
-        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+        if error["reason"] == "not_found" and error["description"] == "_priority":
             raise ErrorPriorityNotFound
-        if error["reason"] == "not_found" and error["description"] == "_status_id":
+        if error["reason"] == "not_found" and error["description"] == "_status":
             raise ErrorStatusNotFound
         if error["reason"] == "not_found" and error["description"] == "_board_id":
             raise ErrorBordNotFound
@@ -187,15 +187,15 @@ async def get_report(app: web.Application, msg: MessageGetReport) -> MessageRepo
         select *
         from cards.report(
             %(board_id)s,
-            %(status_id)s,
-            %(priority_id)s,
+            %(status)s,
+            %(priority)s,
             %(developer_id)s
         )
     """
     params = {
         "board_id": msg.board_id,
-        "status_id": msg.status_id,
-        "priority_id": msg.priority_id,
+        "status": msg.status,
+        "priority": msg.priority,
         "developer_id": msg.developer_id,
     }
 
@@ -212,9 +212,9 @@ async def get_report(app: web.Application, msg: MessageGetReport) -> MessageRepo
 
         if error["reason"] == "not_found" and error["description"] == "_board_id":
             raise ErrorBordNotFound
-        if error["reason"] == "not_found" and error["description"] == "_status_id":
+        if error["reason"] == "not_found" and error["description"] == "_status":
             raise ErrorStatusNotFound
-        if error["reason"] == "not_found" and error["description"] == "_priority_id":
+        if error["reason"] == "not_found" and error["description"] == "_priority":
             raise ErrorPriorityNotFound
         if error["reason"] == "not_found" and error["description"] == "_developer_id":
             raise ErrorDeveloperNotFound

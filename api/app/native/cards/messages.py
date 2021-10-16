@@ -38,7 +38,10 @@ class MessageCreateCard:
     priority: str
     board_id: UUID
     creator_id: UUID
-    estimation: str
+    estimation: Any
+
+    def __post_init__(self):
+        self.estimation = EstimationTime().convert_to_hours(times=self.estimation)
 
 
 @dataclass
@@ -53,8 +56,8 @@ class MessageUpdateCard:
     title: str
     description: str
     developer_id: UUID
-    priority_id: UUID
-    status_id: UUID
+    priority: UUID
+    status: UUID
     board_id: UUID
     estimation: Any
 
@@ -65,8 +68,8 @@ class MessageUpdateCard:
 @dataclass
 class MessageGetReport:
     board_id: UUID
-    status_id: UUID
-    priority_id: UUID
+    status: UUID
+    priority: UUID
     developer_id: UUID
 
 

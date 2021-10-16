@@ -1,11 +1,9 @@
-from uuid import UUID
 from typing import List
 from dataclasses import dataclass
 
 
 @dataclass
 class MessagePriority:
-    priority_id: UUID
     title: str
 
 
