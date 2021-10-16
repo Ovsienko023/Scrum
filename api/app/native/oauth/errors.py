@@ -4,3 +4,7 @@ class ErrorLoginNotFound(Exception):
 
 class ErrorWrongPassword(Exception):
     pass
+
+
+class ErrorResolveUser(Exception):
+    pass

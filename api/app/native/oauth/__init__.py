@@ -1,6 +1,6 @@
 from app.native.oauth.messages import MessageGetToken, MessageToken
 from app.native.oauth.constants import ERROR_WRONG_PASSWORD, ERROR_LOGIN_NOT_FOUND
-from app.native.oauth.errors import ErrorWrongPassword, ErrorLoginNotFound
+from app.native.oauth.errors import ErrorWrongPassword, ErrorLoginNotFound, ErrorResolveUser
 
 __all__ = [
     "MessageGetToken",
@@ -11,4 +11,5 @@ __all__ = [
 
     "ErrorWrongPassword",
     "ErrorLoginNotFound",
+    "ErrorResolveUser",
 ]
