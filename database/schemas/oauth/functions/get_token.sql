@@ -11,10 +11,37 @@ declare
     _exception  text;
 begin
 
+    _login := nullif(trim(_login), '');
+    if _login is null then
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_login"}}';
+        return;
+    end if;
+
+    if not exists(select 1
+                  from users._ u
+                  where u.login = _login)
+    then
+        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_login"}}';
+        return;
+    end if;
+
+    _password := nullif(trim(_password), '');
+    if _password is null then
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_password"}}';
+        return;
+    end if;
+    if not exists(select 1
+                  from users._ u
+                  where u.login = _login and u.hash = _password)
+    then
+        error := '{"errors": {"code": 1, "reason": "not_found", "description": "_password"}}';
+        return;
+    end if;
+
     select *
     into _user
     from users._ us
-    where us.name = _login and us.hash = _password and us.deleted_at is null;
+    where us.login = _login and us.hash = _password and us.deleted_at is null;
 
     user_id := _user.id;
 
@@ -32,3 +59,27 @@ end;
 $$
     language plpgsql volatile
                      security definer;
+
+alter function oauth.get_token(
+    _login varchar,
+    _password varchar,
+    --
+    out error jsonb,
+    out user_id uuid
+    ) owner to postgres;
+
+grant execute on function oauth.get_token(
+    _login varchar,
+    _password varchar,
+    --
+    out error jsonb,
+    out user_id uuid
+    ) to postgres;
+
+revoke all on function oauth.get_token(
+    _login varchar,
+    _password varchar,
+    --
+    out error jsonb,
+    out user_id uuid
+    ) from public;

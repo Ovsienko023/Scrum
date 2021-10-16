@@ -1,27 +1,34 @@
 create or replace function users.create(
-    _name varchar,
-    _hash text,
+    _display_name  varchar,
+    _login         varchar,
+    _hash          text,
     --
-    out error jsonb,
-    out user_id uuid,
+    out error      jsonb,
+    out user_id    uuid,
     out created_at timestamptz
 ) as
 $$
 declare
     _exception     text;
 begin
-    _name := nullif(trim(_name), '');
+    _display_name := nullif(trim(_display_name), '');
 
-    if _name is null then
-        error := '{"errors": {"code": 2, "reason": "required", "description": "_name"}}';
+    if _display_name is null then
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_display_name"}}';
+        return;
+    end if;
+
+    _login := nullif(trim(_login), '');
+    if _login is null then
+        error := '{"errors": {"code": 2, "reason": "required", "description": "_login"}}';
         return;
     end if;
 
     if exists(select 1
               from users._
-              where name = _name)
+              where login = _login)
     then
-        error := '{"errors": {"code": 3, "reason": "exists", "description": "_name"}}';
+        error := '{"errors": {"code": 3, "reason": "exists", "description": "_login"}}';
         return;
     end if;
 
@@ -32,8 +39,8 @@ begin
         return;
     end if;
 
-    insert into users._ as u (name, hash)
-    values (_name, _hash)
+    insert into users._ as u (display_name, login, hash)
+    values (_display_name, _login, _hash)
     returning u.id, u.created_at into user_id, created_at;
 
 exception
@@ -53,8 +60,9 @@ $$
                      security definer;
 
 alter function users.create(
-    _name varchar,
-    _hash text,
+    _display_name  varchar,
+    _login         varchar,
+    _hash          text,
     --
     out error jsonb,
     out user_id uuid,
@@ -62,8 +70,9 @@ alter function users.create(
     ) owner to postgres;
 
 grant execute on function users.create(
-    _name varchar,
-    _hash text,
+    _display_name  varchar,
+    _login         varchar,
+    _hash          text,
     --
     out error jsonb,
     out user_id uuid,
@@ -71,8 +80,9 @@ grant execute on function users.create(
     ) to postgres;
 
 revoke all on function users.create(
-    _name varchar,
-    _hash text,
+    _display_name  varchar,
+    _login         varchar,
+    _hash          text,
     --
     out error jsonb,
     out user_id uuid,
