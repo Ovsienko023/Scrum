@@ -1,14 +1,14 @@
-import asyncio
 from aiohttp import web
 
 from internal.container.container import container
 from internal.container import DI_LOGGER, DI_DATABASE_CLIENT
 from app.constants import APP_CONTAINER
 from app.http.routes import setup_routes
+from app.http.middleware import check_token
 
 
 async def init_app(cnt) -> web.Application:
-    app = web.Application()
+    app = web.Application(middlewares=[check_token])
     app.on_cleanup.append(close_database)
 
     client = cnt.resolve(DI_DATABASE_CLIENT)

@@ -3,7 +3,8 @@ from marshmallow import ValidationError
 
 from internal.database.errors import ErrorDatabase
 from internal.container.constants import DI_LOGGER
-from app.constants import APP_CONTAINER, ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
+from app.constants import APP_CONTAINER
+from app.http.constants import ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.users import SchemaCreateUser
 from app.http.errors import ErrorContainer
 from app.native.users import (
