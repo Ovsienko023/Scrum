@@ -85,6 +85,6 @@ async def resolve_user(app: web.Application, token: str) -> UUID:
     error = result.get("error")
 
     if error is None:
-        return result.get("user_id")
+        return data.get("user_id")
 
     raise ErrorResolveUser

@@ -19,6 +19,7 @@ class MessageBoard:
 
 @dataclass
 class MessageCreateBoard:
+    creator_id: UUID
     title: str
 
 

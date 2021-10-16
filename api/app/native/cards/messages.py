@@ -8,6 +8,7 @@ from app.native.estimation import EstimationTime
 
 @dataclass
 class MessageGetCard:
+    creator_id: UUID
     card_id: int
 
 

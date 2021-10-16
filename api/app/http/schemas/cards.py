@@ -31,9 +31,6 @@ class SchemaCreateCard(Schema):
     board_id = fields.UUID(
         required=True,
     )
-    creator_id = fields.UUID(
-        required=True,
-    )
     estimation = fields.Str(
         required=True,
         validate=validate.Length(min=2)

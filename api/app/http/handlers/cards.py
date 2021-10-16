@@ -4,7 +4,8 @@ from marshmallow import ValidationError
 from internal.database.errors import ErrorDatabase
 from internal.container.constants import DI_LOGGER
 from app.constants import APP_CONTAINER
-from app.http.auth import authorization
+from app.http.decorators import authorization
+from app.http.constants import REQUEST_USER_ID
 from app.http.constants import ERROR_BAD_REQUEST, ERROR_UNKNOWN, ERROR_DATABASE
 from app.http.schemas.cards import SchemaGetCard, SchemaCreateCard, SchemaUpdateCard, SchemaGetReport, SchemaRemoveCard
 from app.http.errors import ErrorContainer
@@ -38,7 +39,7 @@ async def get_card(request) -> web.Response:
     schema = SchemaGetCard()
 
     try:
-        message = MessageGetCard(**schema.load(data))
+        message = MessageGetCard(**schema.load(data), creator_id=request[REQUEST_USER_ID])
     except ValidationError as err:
         logger.error("Failed to get card. Validation error.")
         for field, error in err.messages.items():
@@ -71,6 +72,7 @@ async def get_card(request) -> web.Response:
     })
 
 
+@authorization
 async def get_report(request) -> web.Response:
     errors = ErrorContainer()
     container = request.app[APP_CONTAINER]
@@ -129,6 +131,7 @@ async def get_report(request) -> web.Response:
     })
 
 
+@authorization
 async def create_card(request) -> web.Response:
     errors = ErrorContainer()
     container = request.app[APP_CONTAINER]
@@ -174,6 +177,7 @@ async def create_card(request) -> web.Response:
         })
 
 
+@authorization
 async def update_card(request) -> web.Response:
     errors = ErrorContainer()
     container = request.app[APP_CONTAINER]
@@ -219,6 +223,7 @@ async def update_card(request) -> web.Response:
     return web.json_response()
 
 
+@authorization
 async def remove_card(request) -> web.Response:
     errors = ErrorContainer()
     container = request.app[APP_CONTAINER]

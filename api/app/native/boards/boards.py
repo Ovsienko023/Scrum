@@ -99,7 +99,7 @@ async def create_board(app: web.Application, msg: MessageCreateBoard) -> Message
     """
     params = {
         "title": msg.title,
-        "creator_id": "a24d94d1-2340-4ca2-b765-2384a7a33191",  # todo add oauth
+        "creator_id": msg.creator_id,
     }
     try:
         result = await client.fetchone(query, params)
