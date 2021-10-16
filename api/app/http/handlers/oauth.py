@@ -9,6 +9,10 @@ from app.http.errors import ErrorContainer
 from app.native.oauth import (
     oauth,
     MessageGetToken,
+    ERROR_LOGIN_NOT_FOUND,
+    ERROR_WRONG_PASSWORD,
+    ErrorLoginNotFound,
+    ErrorWrongPassword,
 )
 
 
@@ -32,12 +36,14 @@ async def get_token(request):
         for field, error in err.messages.items():
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
-
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
         results = await oauth.get_token(app=request.app, msg=message)
+    except ErrorWrongPassword:
+        return errors.done(400, ERROR_WRONG_PASSWORD)
+    except ErrorLoginNotFound:
+        return errors.done(404, ERROR_LOGIN_NOT_FOUND)
     except ErrorDatabase:
         return errors.done(500, ERROR_DATABASE)
     except Exception as err:

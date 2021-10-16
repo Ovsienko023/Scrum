@@ -10,6 +10,8 @@ from app.constants import APP_CONTAINER
 from app.native.oauth import (
     MessageGetToken,
     MessageToken,
+    ErrorLoginNotFound,
+    ErrorWrongPassword,
 )
 
 
@@ -40,8 +42,10 @@ async def get_token(app: web.Application, msg: MessageGetToken) -> MessageToken:
     error = result.get("error")
     if error is not None:
         logger.error(f"Failing to get token: {error}")
-        # if error["reason"] == "not_found" and error["description"] == "_card_id":
-        #     raise ErrorCardIdNotFound
+        if error["reason"] == "not_found" and error["description"] == "_login":
+            raise ErrorLoginNotFound
+        if error["reason"] == "not_found" and error["description"] == "_password":
+            raise ErrorWrongPassword
         raise ErrorDatabase
 
     data = {
