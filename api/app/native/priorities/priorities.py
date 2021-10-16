@@ -43,7 +43,6 @@ async def get_priorities(app: web.Application) -> MessagePriorities:
 
     for raw in records:
         item = MessagePriority(
-            priority_id=raw.get("priority_id"),
             title=raw.get("title"),
         )
         message.priorities.append(item)

@@ -43,7 +43,6 @@ async def get_statuses(app: web.Application) -> MessageStatuses:
 
     for raw in records:
         item = MessageStatus(
-            status_id=raw.get("status_id"),
             title=raw.get("title"),
         )
         message.statuses.append(item)

@@ -28,11 +28,5 @@ async def get_statuses(request) -> web.Response:
 
     return web.json_response({
         "count": result.count,
-        "statuses": [
-            {
-                "id": str(status.status_id),
-                "title": status.title,
-            }
-            for status in result.statuses
-        ]
+        "statuses": [status.title for status in result.statuses]
     })

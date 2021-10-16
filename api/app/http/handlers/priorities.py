@@ -28,11 +28,5 @@ async def get_priorities(request) -> web.Response:
 
     return web.json_response({
         "count": result.count,
-        "priorities": [
-            {
-                "id": str(priority.priority_id),
-                "title": priority.title,
-            }
-            for priority in result.priorities
-        ]
+        "priorities": [priority.title for priority in result.priorities]
     })
