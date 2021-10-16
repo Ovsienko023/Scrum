@@ -39,7 +39,7 @@ class MessageCreateCard:
     status_id: UUID
     board_id: UUID
     creator_id: UUID
-    estimation: int
+    estimation: str
 
 
 @dataclass

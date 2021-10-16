@@ -63,6 +63,8 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
     client = container.resolve(DI_DATABASE_CLIENT)
     logger = container.resolve(DI_LOGGER)
 
+    hours = EstimationTime().convert_to_hours(times=msg.estimation)
+
     query = """
         select *
         from cards.create(
@@ -84,7 +86,7 @@ async def create_card(app: web.Application, msg: MessageCreateCard) -> MessageCr
         "status_id": msg.status_id,
         "board_id": msg.board_id,
         "creator_id": msg.creator_id,
-        "estimates_time": msg.estimation,
+        "estimates_time": hours,
     }
 
     try:

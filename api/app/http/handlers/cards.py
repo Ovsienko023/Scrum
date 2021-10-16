@@ -146,7 +146,7 @@ async def create_card(request) -> web.Response:
     schema = SchemaCreateCard()
 
     try:
-        message = MessageCreateCard(**schema.load(data))
+        message = MessageCreateCard(**schema.load(data), creator_id=request[REQUEST_USER_ID])
     except ValidationError as err:
         logger.error("Failed to create card. Validation error.")
         for field, error in err.messages.items():

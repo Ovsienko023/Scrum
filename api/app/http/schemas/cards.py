@@ -43,9 +43,6 @@ class SchemaCreateCard(Schema):
             if (not row.isdigit()) and (row not in valid_name):
                 raise ValidationError("Value error: cannot be converted to hours.")
 
-        hours = EstimationTime().convert_to_hours(times=value)
-        return hours
-
 
 class SchemaUpdateCard(Schema):
     card_id = fields.Int(
