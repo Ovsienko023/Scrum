@@ -1,0 +1,2 @@
+class ErrorLoginAlreadyExists(Exception):
+    pass

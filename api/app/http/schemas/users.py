@@ -1,6 +1,16 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class SchemaCreateUser(Schema):
-    name = fields.Str()
-    password = fields.Str()
+    display_name = fields.Str(
+        required=True,
+        validate=validate.Length(min=1, max=256),
+    )
+    login = fields.Str(
+        required=True,
+        validate=validate.Length(min=1, max=256),
+    )
+    password = fields.Str(
+        required=True,
+        validate=validate.Length(min=1, max=256),
+    )

@@ -8,7 +8,9 @@ from app.http.schemas.users import SchemaCreateUser
 from app.http.errors import ErrorContainer
 from app.native.users import (
     users,
-    MessageCreateUser
+    MessageCreateUser,
+    ERROR_LOGIN_ALREADY_EXISTS,
+    ErrorLoginAlreadyExists,
 )
 
 
@@ -32,12 +34,12 @@ async def create_users(request):
         for field, error in err.messages.items():
             logger.error(f"Invalid field '{field}'. {error}")
             errors.add(f"invalid.{field}", error)
-
-    if not errors.is_empty():
         return errors.done(400, ERROR_BAD_REQUEST)
 
     try:
         results = await users.create_user(app=request.app, msg=message)
+    except ErrorLoginAlreadyExists:
+        return errors.done(400, ERROR_LOGIN_ALREADY_EXISTS)
     except ErrorDatabase:
         return errors.done(500, ERROR_DATABASE)
     except Exception as err:
