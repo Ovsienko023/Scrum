@@ -17,8 +17,8 @@ async def check_token(request, handler):
     if query.get("token"):
         token = query.get("token")
 
-    if request.headers.get('Authorization'):
-        token = request.headers.get('Authorization').replace("Bearer ", "")
+    if request.headers.get("Authorization"):
+        token = request.headers.get("Authorization").replace("Bearer ", "")
 
     try:
         request[REQUEST_USER_ID] = await oauth.resolve_user(app=request.app, token=token)
