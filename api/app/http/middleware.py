@@ -7,6 +7,9 @@ from internal.container import DI_LOGGER
 
 @middleware
 async def check_token(request, handler):
+    if "/docs" in request.path:
+        return await handler(request)
+
     token = None
     request[REQUEST_USER_ID] = None
     query = dict(request.query)

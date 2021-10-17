@@ -1,6 +1,7 @@
 config = {
     "dirs": {
-        "logger": r"D:\projects\Scrum\api\api.log",
+        "logger": "api.log",
+        "docs": "docs/openapi.yaml"
     },
     "db": {
         "dbname": "postgres",
