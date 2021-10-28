@@ -11,11 +11,7 @@ from app.http.middleware import check_token
 async def init_app(cnt) -> web.Application:
     config = cnt.resolve(DI_CONFIG)
     app = web.Application(middlewares=[check_token])
-    SwaggerFile(
-        app,
-        spec_file=config["dirs"]["docs"],
-        swagger_ui_settings=SwaggerUiSettings(path="/docs"),
-    )
+
     app.on_cleanup.append(close_database)
 
     client = cnt.resolve(DI_DATABASE_CLIENT)
@@ -23,6 +19,13 @@ async def init_app(cnt) -> web.Application:
 
     app[APP_CONTAINER] = cnt
     app.add_routes(setup_routes())
+
+    if config["docs"]["enable"]:
+        SwaggerFile(
+            app,
+            spec_file=config["dirs"]["docs"],
+            swagger_ui_settings=SwaggerUiSettings(path=config["docs"]["url"]),
+        )
 
     return app
 

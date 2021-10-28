@@ -10,4 +10,8 @@ config = {
         "host": "localhost",
         "port": "5442",
     },
+    "docs": {
+        "url": "/docs",
+        "enable": True,
+    }
 }

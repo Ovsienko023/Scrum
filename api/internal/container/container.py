@@ -20,21 +20,10 @@ logger.add(config["dirs"]["logger"], rotation="5MB", retention=5)
 container.register(DI_LOGGER, instance=logger)
 
 instance_client = ClientDB(
-    database=config['db']['dbname'],  # "mcu",
-    user=config['db']['user'],  # "postgres",
-    password=config['db']['password'],  # "",
+    database=config['db']['dbname'],
+    user=config['db']['user'],
+    password=config['db']['password'],
     host=config['db']['host'],
     port=config['db']['port'],
 )
 container.register(DI_DATABASE_CLIENT, instance=instance_client)
-
-
-# client = ClientDB(dbname="mcu",
-#                   user="postgres",
-#                   password="",
-#                   host="localhost",
-#                   port=5432)
-# client._connect()
-# client.query("Select * from hub.users")
-# print(client.fetchone())
-# container.register("DI_DATABASE_CLIENT", ClientDB, host=config['db']['host'], port=config['db']['port'])
