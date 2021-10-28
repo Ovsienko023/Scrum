@@ -12,9 +12,6 @@ def authorization(func):
         if os.environ.get(APP_DISABLE_AUTHORIZATION):
             return await func(request)
 
-        if request[REQUEST_USER_ID]:
-            return await func(request)
-
         return web.json_response(
             status=401,
             data={
