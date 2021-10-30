@@ -1,4 +1,5 @@
 from aiohttp import web
+from pathlib import Path
 from aiohttp_swagger3 import SwaggerFile, SwaggerUiSettings
 
 from internal.container.container import container
@@ -23,7 +24,7 @@ async def init_app(cnt) -> web.Application:
     if config["docs"]["enable"]:
         SwaggerFile(
             app,
-            spec_file=config["dirs"]["docs"],
+            spec_file=Path(config["dirs"]["docs"]),
             swagger_ui_settings=SwaggerUiSettings(path=config["docs"]["url"]),
         )
 
