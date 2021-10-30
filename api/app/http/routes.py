@@ -1,9 +1,11 @@
 from aiohttp import web
-from app.http.handlers import users, boards, cards, priorities, statuses, oauth
+from app.http.handlers import echo, users, boards, cards, priorities, statuses, oauth
 
 
 def setup_routes():
     return [
+        web.get("/echo", echo.fetch_echo),
+
         web.post("/oauth", oauth.get_token),
         web.post("/users", users.create_users),
 
