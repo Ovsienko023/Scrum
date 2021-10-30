@@ -13,5 +13,8 @@ config = {
     "docs": {
         "url": "/docs",
         "enable": True,
+    },
+    "web": {
+        "port": 8888,
     }
 }

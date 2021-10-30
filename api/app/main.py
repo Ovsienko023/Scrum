@@ -33,9 +33,10 @@ async def init_app(cnt) -> web.Application:
 
 def main():
     logger = container.resolve(DI_LOGGER)
+    config = container.resolve(DI_CONFIG)
 
     app = init_app(cnt=container)
-    web.run_app(app, host="127.0.0.1", port=8888, access_log=logger)
+    web.run_app(app, host="127.0.0.1", port=config["web"]["port"], access_log=logger)
 
 
 async def close_database(app: web.Application):
