@@ -35,4 +35,5 @@
 
 # Для запуска
 
-    docker_web_api: ```sudo docker run --rm --name web -p 8887:8888 web_scrum```
+docker_web_api: 
+    ```sudo docker run --rm --name web -p 8887:8888 web_scrum```
