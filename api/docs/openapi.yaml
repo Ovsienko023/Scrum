@@ -10,6 +10,21 @@ tags:
 
 
 paths:
+  /oauth:
+    post:
+      tags:
+        - Authorization
+      summary: Login
+      requestBody:
+        $ref: "#/components/requestBodies/AuthorizationParams"
+      responses:
+        "200":
+          $ref: "#/components/responses/AuthorizationResult"
+#        400:
+#          $ref: "../swagger/responses.yaml#/InputDataErrorResponse"
+#        500:
+#          $ref: "../swagger/responses.yaml#/DatabaseErrorResponse"
+
   /boards/{board_id}:
     get:
       tags:
@@ -20,7 +35,16 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/GetBoardResult"
-
+  /boards:
+    post:
+      tags:
+        - Boards
+      summary: Create board
+      requestBody:
+        $ref: "#/components/requestBodies/CreateBoardBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreatedBoardResult"
 
 components:
   parameters:
@@ -31,8 +55,54 @@ components:
       schema:
         $ref: "#/components/schemas/BoardId"
 
+  requestBodies:
+    # ------OAUTH------
+    AuthorizationParams:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthorizationBody'
+      required: true
+    # ------BOARD------
+    CreateBoardBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateBoardBody"
+      required: true
 
   schemas:
+    # ------OAUTH------
+    Login:
+      type: string
+      description: "User login"
+      nullable: false
+      example: "admin"
+
+    Password:
+      type: string
+      description: "User password"
+      nullable: false
+      example: "admin"
+
+    Token:
+      type: string
+      description: "jwt token"
+      nullable: false
+      example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleGFtcGxlIjoiand0X3Rva2VuIn0.MXPuwZMnFH7HBdLICjtT9tmAgVnSAPi3m45i6j6y7aA"
+
+    AuthorizationBody:
+      type: object
+      properties:
+        login:
+          $ref: '#/components/schemas/Login'
+        password:
+          $ref: '#/components/schemas/Password'
+      required:
+        - username
+        - password
+
+    # ------BOARD------
     BoardId:
       type: string
       format: uuid
@@ -42,7 +112,7 @@ components:
     BoardTitle:
       type: string
       description: ""
-      example: "Europe/Moscow"
+      example: "Board display name"
 
     BoardCreatorId:
       type: string
@@ -66,8 +136,24 @@ components:
         created_at:
           $ref: "#/components/schemas/BoardCreatedAt"
 
+    CreateBoardBody:
+      type: object
+      properties:
+        title:
+          $ref: "#/components/schemas/BoardTitle"
 
   responses:
+    # ------OAUTH------
+    AuthorizationResult:
+      description: "Authorization Token"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                $ref: '#/components/schemas/Token'
+    # ------BOARD------
     GetBoardResult:
       description: ""
       content:
@@ -78,7 +164,20 @@ components:
               user:
                 $ref: "#/components/schemas/Board"
 
+    CreatedBoardResult:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/BoardId"
+              created_at:
+                $ref: "#/components/schemas/BoardCreatedAt"
+
 x-tagGroups:
   - name: Main
     tags:
+      - Authorization
       - Boards
