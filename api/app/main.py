@@ -24,7 +24,7 @@ async def init_app(cnt) -> web.Application:
     if config["docs"]["enable"]:
         SwaggerFile(
             app,
-            spec_file=Path(config["dirs"]["docs"]),
+            spec_file=str(Path(config["dirs"]["docs"])),
             swagger_ui_settings=SwaggerUiSettings(path=config["docs"]["url"]),
         )
 
@@ -36,7 +36,7 @@ def main():
     config = container.resolve(DI_CONFIG)
 
     app = init_app(cnt=container)
-    web.run_app(app, host="127.0.0.1", port=config["web"]["port"], access_log=logger)
+    web.run_app(app, host="0.0.0.0", port=config["web"]["port"], access_log=logger)
 
 
 async def close_database(app: web.Application):

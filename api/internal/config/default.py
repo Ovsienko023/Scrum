@@ -7,8 +7,8 @@ config = {
         "dbname": "postgres",
         "user": "postgres",
         "password": "1234",
-        "host": "localhost",
-        "port": "5442",
+        "host": "database",  # "localhost"
+        "port": "5432",  # "5442"
     },
     "docs": {
         "url": "/docs",

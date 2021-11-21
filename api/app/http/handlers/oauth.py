@@ -52,5 +52,5 @@ async def get_token(request):
         return errors.done(500, ERROR_UNKNOWN)
 
     return web.json_response({
-            "token": results.access_token
+            "token": str(results.access_token)
         })
