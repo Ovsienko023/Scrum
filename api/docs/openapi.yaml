@@ -46,7 +46,15 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/EmptyOkResponse"
-
+    delete:
+      tags:
+        - Boards
+      summary: Delete board
+      parameters:
+        - $ref: "#/components/parameters/ParamsBoardId"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptyOkResponse"
 
   /boards:
     get:
