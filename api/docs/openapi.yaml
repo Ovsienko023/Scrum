@@ -35,7 +35,15 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/GetBoardResult"
+
   /boards:
+    get:
+      tags:
+        - Boards
+      summary: Get board list
+      responses:
+        "200":
+          $ref: "#/components/responses/GetBoardListResult"
     post:
       tags:
         - Boards
@@ -142,6 +150,25 @@ components:
         title:
           $ref: "#/components/schemas/BoardTitle"
 
+    count:
+      type: integer
+      minimum: 0
+      description: "Количество сущностей"
+      example: 1
+
+    BoardsAll:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/BoardId"
+        title:
+          $ref: "#/components/schemas/BoardTitle"
+        creator_id:
+          $ref: "#/components/schemas/BoardCreatorId"
+        created_at:
+          $ref: "#/components/schemas/BoardCreatedAt"
+
+
   responses:
     # ------OAUTH------
     AuthorizationResult:
@@ -163,6 +190,20 @@ components:
             properties:
               user:
                 $ref: "#/components/schemas/Board"
+
+    GetBoardListResult:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              count:
+                $ref: '#/components/schemas/count'
+              boards:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoardsAll'
 
     CreatedBoardResult:
       description: ""
