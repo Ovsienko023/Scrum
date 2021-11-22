@@ -5,9 +5,12 @@ info:
   version: 0.1.0
 
 tags:
+  - name: Authorization
+    description: "oauth operations"
   - name: Boards
     description: "CRUD board operations"
-
+  - name: Cards
+    description: "CRUD card operations"
 
 paths:
   /oauth:
@@ -74,14 +77,51 @@ paths:
         "200":
           $ref: "#/components/responses/CreatedBoardResult"
 
+  /cards/report:
+    get:
+      tags:
+        - Cards
+      summary: Get card list / (report)
+      parameters:
+        - $ref: "#/components/parameters/ParamsBoardId"
+        - $ref: "#/components/parameters/ParamsPriority"
+        - $ref: "#/components/parameters/ParamsStatus"
+        - $ref: "#/components/parameters/ParamsDeveloperId"
+      responses:
+        "200":
+          $ref: "#/components/responses/ReportCardResult"
+
 components:
   parameters:
+    # ------BOARD------
     ParamsBoardId:
       name: board_id
       in: path
       required: true
       schema:
         $ref: "#/components/schemas/BoardId"
+
+    # ------CARD------
+    ParamsPriority:
+      name: priority
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Priority"
+
+    ParamsStatus:
+      name: status
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Status"
+
+    ParamsDeveloperId:
+      name: developer_id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/DeveloperId"
 
   requestBodies:
     # ------OAUTH------
@@ -107,6 +147,39 @@ components:
       required: true
 
   schemas:
+    # ------CARDS------
+    Priority:
+      type: string
+      description: "Сard priority"
+      enum:
+        - Low
+        - Normal
+        - High
+        - Immediate
+      example: low
+
+    Status:
+      type: string
+      description: "Сard status"
+      enum:
+        - New
+        - In development
+        - Developed
+        - On hold
+        - Closed
+      example: New
+
+    DeveloperId:
+      type: string
+      format: uuid
+      description: ""
+      example: "c90c3dd8-ead1-43b7-8ee6-1c9fc4c3233f"
+
+    Estimation:
+      type: string
+      description: "ideal working hours"
+      example: "8h"
+
     # ------OAUTH------
     Login:
       type: string
@@ -201,6 +274,47 @@ components:
         created_at:
           $ref: "#/components/schemas/BoardCreatedAt"
 
+    # ------CARDS------
+    Description:
+      type: integer
+      minimum: 0
+      description: ""
+      example: "description card"
+
+    CreatedAt:
+      type: integer
+      description: ""
+      nullable: false
+      example: 1577836800
+    UpdatedAt:
+      type: integer
+      description: ""
+      nullable: false
+      example: 1577836800
+
+    CardsAll:
+      type: object
+      properties:
+        title:
+          $ref: "#/components/schemas/BoardId"
+        description:
+          $ref: "#/components/schemas/Description"
+        developer_id:
+          $ref: "#/components/schemas/CreatorId"
+        priority:
+          $ref: "#/components/schemas/Priority"
+        status:
+          $ref: "#/components/schemas/Status"
+        estimates_time:
+          $ref: "#/components/schemas/Estimates"
+        board_id:
+          $ref: "#/components/schemas/BoardId"
+        creator_id:
+          $ref: "#/components/schemas/CreatorId"
+        created_at:
+          $ref: "#/components/schemas/CreatedAt"
+        updated_at:
+          $ref: "#/components/schemas/UpdatedAt"
 
   responses:
     # ------OAUTH------
@@ -250,6 +364,23 @@ components:
               created_at:
                 $ref: "#/components/schemas/BoardCreatedAt"
 
+    # ------CARDS------
+    ReportCardResult:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              count:
+                $ref: '#/components/schemas/count'
+              estimation:
+                $ref: '#/components/schemas/Estimation' # 8h
+              cards:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardsAll'
+
     # ------ERRORS------
     EmptyOkResponse:
       description: Accepted
@@ -260,3 +391,4 @@ x-tagGroups:
     tags:
       - Authorization
       - Boards
+      - Cards
