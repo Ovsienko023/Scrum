@@ -35,6 +35,18 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/GetBoardResult"
+    patch:
+      tags:
+        - Boards
+      summary: Update board
+      parameters:
+        - $ref: "#/components/parameters/ParamsBoardId"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateBoardBody"
+      responses:
+        "204":
+          $ref: "#/components/responses/EmptyOkResponse"
+
 
   /boards:
     get:
@@ -77,6 +89,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateBoardBody"
+      required: true
+
+    UpdateBoardBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateBoardBody"
       required: true
 
   schemas:
@@ -150,6 +169,12 @@ components:
         title:
           $ref: "#/components/schemas/BoardTitle"
 
+    UpdateBoardBody:
+      type: object
+      properties:
+        title:
+          $ref: "#/components/schemas/BoardTitle"
+
     count:
       type: integer
       minimum: 0
@@ -216,6 +241,11 @@ components:
                 $ref: "#/components/schemas/BoardId"
               created_at:
                 $ref: "#/components/schemas/BoardCreatedAt"
+
+    # ------ERRORS------
+    EmptyOkResponse:
+      description: Accepted
+      content: {}
 
 x-tagGroups:
   - name: Main
